@@ -1,0 +1,370 @@
+"use client";
+import React, { useState } from "react";
+import { Scanner } from "@yudiel/react-qr-scanner";
+import {
+  Search,
+  Camera,
+  AlertCircle,
+  CheckCircle,
+  Banknote,
+  Loader2,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardFooter,
+} from "@/components/ui/card";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { toast } from "sonner";
+import { apiService } from "@/lib/services/apiService";
+import { useActivateTaxpayer } from "@/lib/hooks/agent.hook";
+
+interface RecentPayment {
+  id: string;
+  amount: string;
+  timestamp: string;
+  payment_method?: string;
+}
+
+interface VehicleData {
+  id: string;
+  plate_number: string;
+  owner_name: string;
+  phone_number: string;
+  is_active: boolean;
+  current_balance: number;
+  total_paid: number;
+  total_expected_revenue: number;
+  recent_payments: RecentPayment[];
+}
+
+export default function AgentScanner() {
+  const [mode, setMode] = useState<"SCAN" | "MANUAL">("MANUAL");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [vehicleData, setVehicleData] = useState<VehicleData | null>(null);
+  const [paymentAmount, setPaymentAmount] = useState("");
+
+  const { mutate: activateTaxpayer } = useActivateTaxpayer();
+
+  const handleActivate = () => {
+    activateTaxpayer();
+  };
+
+  // 1. Search Logic - Direct endpoint like Postman
+  const handleSearch = async (query: string) => {
+    if (!query.trim()) {
+      toast.error("Please enter a plate number");
+      return;
+    }
+
+    setLoading(true);
+    setVehicleData(null);
+
+    try {
+      // Direct URL just like in Postman: /api/taxations/agent/vehicles/AD-1234/
+      const res = await apiService.get(
+        `/taxations/agent/vehicles/${query.trim().toUpperCase()}/`
+      );
+
+      setVehicleData(res);
+      toast.success("Vehicle found!");
+      setMode("MANUAL"); // Stop scanning if in scan mode
+    } catch (error: any) {
+      console.error("Search error:", error);
+
+      if (error?.response?.status === 404) {
+        toast.error("Vehicle not found with that Plate Number");
+      } else {
+      }
+      setVehicleData(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 2. Payment Logic (POST)
+  const handlePayment = async () => {
+    if (!vehicleData || !paymentAmount) {
+      toast.error("Please enter a payment amount");
+      return;
+    }
+
+    const amount = parseFloat(paymentAmount);
+    if (isNaN(amount) || amount <= 0) {
+      toast.error("Please enter a valid amount");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const res = await apiService.post(
+        `/taxations/agent/vehicles/${vehicleData.plate_number}/pay/`,
+        { amount }
+      );
+
+      // Update the vehicle data with the new balance
+      setVehicleData(res);
+      setPaymentAmount("");
+      toast.success("Payment collected successfully!");
+    } catch (error: any) {
+      console.error("Payment error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen p-2 pb-20">
+      <div className="max-w-xl mx-auto space-y-6">
+        {/* HEADER */}
+        <div className="flex border py-2 px-4 rounded-lg border-border bg-card justify-between items-center">
+          <div>
+            <p className="text-sm font-semibold text-secondary-foreground">
+              Scan or search vehicles
+            </p>
+          </div>
+          <div className="flex gap-2">
+            <Button
+              variant={mode === "SCAN" ? "default" : "outline"}
+              size="icon"
+              onClick={() => setMode("SCAN")}
+              className={mode === "SCAN" ? "bg-blue-600" : ""}
+            >
+              <Camera className="h-5 w-5" />
+            </Button>
+            <Button
+              variant={mode === "MANUAL" ? "default" : "outline"}
+              size="icon"
+              onClick={() => setMode("MANUAL")}
+              className={mode === "MANUAL" ? "bg-blue-600" : ""}
+            >
+              <Search className="h-5 w-5" />
+            </Button>
+          </div>
+        </div>
+
+        {/* SCANNER AREA */}
+        {mode === "SCAN" && (
+          <Card className="overflow-hidden border-2 border-border">
+            <div className="aspect-square bg-black relative">
+              <Scanner
+                onResult={(text) => handleSearch(text)}
+                onError={(error) => console.log(error?.message)}
+              />
+              <div className="absolute inset-0 border-4 border-blue-500/50 z-10 pointer-events-none m-8 rounded-lg animate-pulse" />
+            </div>
+            <CardFooter className="bg-muted p-3 text-center text-sm text-blue-700 font-medium">
+              Point camera at Vehicle QR Code
+            </CardFooter>
+          </Card>
+        )}
+
+        {/* MANUAL SEARCH AREA */}
+        {mode === "MANUAL" && (
+          <Card className="shadow-lg">
+            <CardContent className="pt-6">
+              <div className="flex gap-2">
+                <Input
+                  placeholder="Enter Plate Number (e.g. AD-1234)"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value.toUpperCase())}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleSearch(searchQuery);
+                    }
+                  }}
+                  className="text-lg uppercase font-semibold"
+                  disabled={loading}
+                />
+                <Button
+                  onClick={() => handleSearch(searchQuery)}
+                  disabled={loading || !searchQuery.trim()}
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
+                  {loading ? (
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                  ) : (
+                    <Search className="h-5 w-5" />
+                  )}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* VEHICLE RESULT CARD */}
+        {vehicleData && (
+          <Card className="animate-in fade-in slide-in-from-bottom-4">
+            <CardHeader className=" border-b">
+              <div className="flex justify-between items-start">
+                <div className="py-2">
+                  <CardTitle className="text-3xl font-bold text-primary">
+                    {vehicleData.plate_number}
+                  </CardTitle>
+                  <p className="text-sm text-secondary-foreground mt-1 font-medium">
+                    {vehicleData.owner_name}
+                  </p>
+                  <p className="text-xs text-secondary-foreground mt-0.5">
+                    {vehicleData.phone_number}
+                  </p>
+                </div>
+                {vehicleData.is_active ? (
+                  <span className="bg-green-100 text-green-800 text-xs px-3 py-1.5 rounded-full font-bold flex items-center gap-1">
+                    <CheckCircle className="h-3 w-3" />
+                    Active
+                  </span>
+                ) : (
+                  <div className="flex gap-2">
+                    <span className="bg-red-100 text-red-800 text-xs px-3 py-1.5 rounded-full font-bold flex items-center gap-1">
+                      <AlertCircle className="h-3 w-3" />
+                      Inactive
+                    </span>
+                    <Button onClick={handleActivate}>Activate</Button>
+                  </div>
+                )}
+              </div>
+            </CardHeader>
+
+            <CardContent className="pt-6 space-y-6">
+              {/* STATUS INDICATOR */}
+              {vehicleData.current_balance < 0 ? (
+                <Alert
+                  variant="destructive"
+                  className="border-red-600 bg-red-50"
+                >
+                  <AlertCircle className="h-5 w-5" />
+                  <AlertTitle className="text-lg font-bold">OWING</AlertTitle>
+                  <AlertDescription className="text-red-700">
+                    Driver owes{" "}
+                    <strong className="text-xl">
+                      ₦{Math.abs(vehicleData.current_balance).toLocaleString()}
+                    </strong>
+                  </AlertDescription>
+                </Alert>
+              ) : (
+                <Alert className="border-green-600 bg-green-50 text-green-800">
+                  <CheckCircle className="h-5 w-5 text-green-600" />
+                  <AlertTitle className="text-lg font-bold">
+                    Clean Record
+                  </AlertTitle>
+                  <AlertDescription>
+                    Balance is{" "}
+                    <strong className="text-xl">
+                      ₦{vehicleData.current_balance.toLocaleString()}
+                    </strong>
+                  </AlertDescription>
+                </Alert>
+              )}
+
+              {/* FINANCIAL SUMMARY */}
+              <Card className="bg-blue-50 border-blue-200">
+                <CardContent className="pt-4 pb-4">
+                  <p className="text-xs text-blue-700 font-medium mb-1">
+                    Total Paid
+                  </p>
+                  <p className="text-xl font-bold text-blue-900">
+                    ₦{vehicleData.total_paid.toLocaleString()}
+                  </p>
+                </CardContent>
+              </Card>
+
+              {/* PAYMENT FORM */}
+              <div className="space-y-3 pt-2">
+                <label className="text-sm font-bold text-primary uppercase tracking-wide">
+                  Collect Cash Payment
+                </label>
+                <div className="relative">
+                  <Banknote className="absolute left-3 top-3.5 h-5 w-5 text-slate-400" />
+                  <Input
+                    type="number"
+                    placeholder="Enter amount (e.g. 150)"
+                    className="pl-10 text-lg h-12 font-semibold"
+                    value={paymentAmount}
+                    onChange={(e) => setPaymentAmount(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        handlePayment();
+                      }
+                    }}
+                    disabled={loading}
+                  />
+                </div>
+                <Button
+                  className="w-full bg-green-600 hover:bg-green-700 h-12 text-lg font-bold shadow-lg"
+                  onClick={handlePayment}
+                  disabled={loading || !paymentAmount}
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    "Confirm Payment"
+                  )}
+                </Button>
+              </div>
+
+              {/* RECENT HISTORY */}
+              {vehicleData.recent_payments &&
+                vehicleData.recent_payments.length > 0 && (
+                  <div className="pt-4 border-t">
+                    <p className="text-xs text-secondary-foreground font-bold mb-3 uppercase tracking-wide">
+                      Recent Payments
+                    </p>
+                    <div className="space-y-2">
+                      {vehicleData.recent_payments.slice(0, 5).map((p) => (
+                        <div
+                          key={p.id}
+                          className="flex justify-between items-center text-sm p-3 bg-card rounded-lg border border-border"
+                        >
+                          <div>
+                            <span className="text-secondary-foreground text-xs">
+                              {new Date(p.timestamp).toLocaleDateString(
+                                "en-US",
+                                {
+                                  month: "short",
+                                  day: "numeric",
+                                  year: "numeric",
+                                }
+                              )}
+                            </span>
+                            {p.payment_method && (
+                              <span className="ml-2 text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
+                                {p.payment_method}
+                              </span>
+                            )}
+                          </div>
+                          <span className="font-bold text-green-700">
+                            ₦{parseFloat(p.amount).toLocaleString()}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+            </CardContent>
+          </Card>
+        )}
+
+        {/* EMPTY STATE */}
+        {!vehicleData && !loading && mode === "MANUAL" && (
+          <Card className="bg-card border-dashed border-2">
+            <CardContent className="pt-12 pb-12 text-center">
+              <Search className="h-12 w-12 text-primary mx-auto mb-3" />
+              <p className="text-secondary-foreground">
+                Enter a plate number to search
+              </p>
+            </CardContent>
+          </Card>
+        )}
+      </div>
+    </div>
+  );
+}

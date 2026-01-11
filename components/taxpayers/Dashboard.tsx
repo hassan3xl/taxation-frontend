@@ -1,0 +1,278 @@
+"use client";
+import React from "react";
+import {
+  Car,
+  Calendar,
+  Check,
+  History,
+  Settings,
+  Plus,
+  Wallet,
+  TrendingUp,
+  CreditCard,
+  Phone,
+  User,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { useGetVehicles } from "@/lib/hooks/taxations.hooks";
+import { useRouter } from "next/navigation";
+
+// Type definitions
+interface RecentPayment {
+  id: string;
+  amount: string;
+  payment_method: string;
+  timestamp: string;
+  notes: string;
+}
+
+interface VehicleDetails {
+  id: string;
+  plate_number: string;
+  owner_name: string;
+  phone_number: string;
+  registration_date: string;
+  is_active: boolean;
+  current_balance: number;
+  total_paid: number;
+  total_expected_revenue: number;
+  recent_payments: RecentPayment[];
+}
+
+const Dashboard = () => {
+  const { data: vehiclesDetails } = useGetVehicles();
+  console.log("vehiclesDetails", vehiclesDetails);
+  const router = useRouter();
+
+  if (vehiclesDetails?.length < 1) {
+    router.push("/new");
+  }
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
+
+  const formatCurrency = (amount: number) => {
+    return `₦${amount?.toLocaleString("en-US", { minimumFractionDigits: 2 })}`;
+  };
+
+  if (!vehiclesDetails || vehiclesDetails.length === 0) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Card className="max-w-md w-full">
+          <CardContent className="pt-6 text-center">
+            <Car className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+            <p className="text-muted-foreground">No vehicles found</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen">
+      <div className="max-w-6xl mx-auto space-y-6">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-primary">My Vehicles</h1>
+            <p className="text-slate-600 mt-1">
+              Manage your registered vehicles
+            </p>
+          </div>
+          <Button className="bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-200">
+            <Plus className="mr-2 h-4 w-4" />
+            Add Vehicle
+          </Button>
+        </div>
+
+        {/* Vehicle Cards */}
+        {vehiclesDetails.map((vehicle: VehicleDetails) => (
+          <Card key={vehicle.id} className="overflow-hidden shadow-xl border-0">
+            {/* Hero Section */}
+            <div className="bg-card relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-32 translate-x-32"></div>
+              <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-24 -translate-x-24"></div>
+
+              <div className="relative z-10">
+                <div className="flex items-start justify-between mb-6">
+                  <div className="flex items-center gap-3">
+                    <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
+                      <Car className="h-6 w-6" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium opacity-90">
+                        License Plate
+                      </p>
+                      <h2 className="text-3xl md:text-4xl font-bold tracking-wider mt-1">
+                        {vehicle.plate_number}
+                      </h2>
+                    </div>
+                  </div>
+                  <Badge
+                    className={`${
+                      vehicle.is_active
+                        ? "bg-green-500 hover:bg-green-600"
+                        : "bg-red-500 hover:bg-red-600"
+                    } text-white border-0 px-3 py-1`}
+                  >
+                    {vehicle.is_active ? (
+                      <>
+                        <Check className="mr-1 h-3 w-3" />
+                        Active
+                      </>
+                    ) : (
+                      "Inactive"
+                    )}
+                  </Badge>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3">
+                    <User className="h-4 w-4 mb-1 opacity-75" />
+                    <p className="text-xs opacity-75">Owner</p>
+                    <p className="font-semibold text-sm mt-0.5">
+                      {vehicle.owner_name}
+                    </p>
+                  </div>
+                  <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3">
+                    <Phone className="h-4 w-4 mb-1 opacity-75" />
+                    <p className="text-xs opacity-75">Contact</p>
+                    <p className="font-semibold text-sm mt-0.5">
+                      {vehicle.phone_number}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <CardContent className="p-6 md:p-8 space-y-6">
+              {/* Financial Overview */}
+              <div>
+                <h3 className="text-lg font-semibold text-primary mb-4 flex items-center gap-2">
+                  <Wallet className="h-5 w-5 text-blue-600" />
+                  Financial Overview
+                </h3>
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <Card className="bg-gradient-to-br from-green-50 to-emerald-50 border-green-200">
+                    <CardContent className="pt-6">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-xs font-medium text-green-700 mb-1">
+                            Current Balance
+                          </p>
+                          <p className="text-2xl font-bold text-green-900">
+                            {formatCurrency(vehicle.current_balance)}
+                          </p>
+                        </div>
+                        <div className="p-3 bg-green-600 rounded-full">
+                          <Wallet className="h-5 w-5 text-white" />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200">
+                    <CardContent className="pt-6">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-xs font-medium text-blue-700 mb-1">
+                            Total Paid
+                          </p>
+                          <p className="text-2xl font-bold text-blue-900">
+                            {formatCurrency(vehicle.total_paid)}
+                          </p>
+                        </div>
+                        <div className="p-3 bg-blue-600 rounded-full">
+                          <CreditCard className="h-5 w-5 text-white" />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+
+              {/* Recent Payments */}
+              {vehicle.recent_payments.length > 0 && (
+                <div>
+                  <h3 className="text-lg font-semibold text-primary mb-4 flex items-center gap-2">
+                    <History className="h-5 w-5 text-blue-600" />
+                    Recent Payments
+                  </h3>
+                  <div className="space-y-3">
+                    {vehicle.recent_payments.map((payment) => (
+                      <Card key={payment.id} className="bg-card border-border">
+                        <CardContent className="p-4">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <div className="p-2 bg-blue-100 rounded-lg">
+                                <CreditCard className="h-4 w-4 text-blue-600" />
+                              </div>
+                              <div>
+                                <p className="text-secondary-foreground">
+                                  {payment.payment_method}
+                                </p>
+                                <p className="font-semibold text-primary">
+                                  {formatCurrency(parseFloat(payment.amount))}
+                                </p>
+                                <p className="text-xs text-slate-600 mt-0.5">
+                                  {formatDate(payment.timestamp)}
+                                </p>
+                              </div>
+                            </div>
+                            <Badge variant="outline" className="capitalize">
+                              {payment.payment_method}
+                            </Badge>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Registration Info */}
+              <Card className="bg-card border-slate-200">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-2 text-primary">
+                    <Calendar className="h-4 w-4" />
+                    <span className="text-sm font-medium">Registered on:</span>
+                    <span className="text-sm">
+                      {formatDate(vehicle.registration_date)}
+                    </span>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Action Buttons */}
+              <div className="grid grid-cols-2 gap-3 pt-2">
+                <Button
+                  variant="outline"
+                  className="w-full border-2 hover:bg-blue-50 hover:border-blue-300"
+                >
+                  <History className="mr-2 h-4 w-4" />
+                  View History
+                </Button>
+                <Button
+                  variant="outline"
+                  className="w-full border-2 hover:bg-slate-100"
+                >
+                  <Settings className="mr-2 h-4 w-4" />
+                  Settings
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default Dashboard;
