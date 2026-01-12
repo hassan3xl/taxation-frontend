@@ -1,36 +1,30 @@
-"use client";
-
 import Link from "next/link";
-import Image from "next/image";
+import React from "react";
 import {
-  BellIcon,
-  Menu,
-  MenuIcon,
-  MessageCircleCode,
-  MessageCircleDashedIcon,
-  MessageCircleReply,
-  X,
-} from "lucide-react";
-import { AccountDropdown } from "./AccountDropdown";
-import { useAuth } from "@/contexts/AuthContext";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
-export function AdminNavbar() {
+export const AdminNavbar = () => {
   return (
-    <nav className="fixed top-0 left-0 border right-0 z-50 ">
-      {/* Container to handle padding and max width */}
-      <div className="w-full bg-sidebar">
-        <div className="flex items-center justify-between h-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-          <div className="flex items-center">
-            <Link href="/" className="rounded-md ml-2 p-2">
-              Tax-Me
-            </Link>
-          </div>
+    <div className="bg-sidebar py-2 px-5 flex justify-between text-white">
+      <Link href="/">
+        <h2>tax-me</h2>
+      </Link>
 
-          <div className="flex gap-4 items-center">
-            <AccountDropdown />
-          </div>
-        </div>
+      <div className="flex items-center">
+        {/* <ThemeTogler /> */}
+
+        <Avatar>
+          <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+          <AvatarFallback className="text-black">BT</AvatarFallback>
+        </Avatar>
       </div>
-    </nav>
+    </div>
   );
-}
+};

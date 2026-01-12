@@ -81,15 +81,6 @@ export default function VehicleRegistrationFlow() {
     setStep("otp");
   };
 
-  const handleVerifyOtp = async (data: any) => {
-    await verifyOtp(data);
-    router.push("/dashboard");
-  };
-
-  /* ==================================================
-     STEP 1: REGISTER / SEARCH VEHICLE
-     ================================================== */
-
   if (step === "register") {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
@@ -151,10 +142,6 @@ export default function VehicleRegistrationFlow() {
       </div>
     );
   }
-
-  /* ==================================================
-     STEP 2: VERIFY VEHICLE DETAILS
-     ================================================== */
 
   if (step === "verify-details") {
     return (
@@ -223,19 +210,12 @@ export default function VehicleRegistrationFlow() {
     );
   }
 
-  /* ==================================================
-     STEP 3: VERIFY OTP
-     ================================================== */
-  /* ==================================================
-     STEP 3: VERIFY OTP
-     ================================================== */
-
   if (step === "otp") {
     const handleOtpSubmit = otpForm.handleSubmit(async (data) => {
       await verifyOtp({
         otp: data.otp,
       });
-      router.push("/dashboard");
+      router.push("/");
     });
 
     return (

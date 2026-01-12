@@ -1,11 +1,8 @@
-import { AdminNavbar } from "@/components/nav/AdminNavbar";
-import { Navbar } from "@/components/nav/Navbar";
 import React from "react";
 import { redirect } from "next/navigation";
 import { getAccessToken } from "@/lib/actions/auth.actions";
-import { cookies } from "next/headers";
 import { getCurrentUser } from "@/lib/auth";
-import Sidebar from "@/components/admin/Sidebar";
+import { AgentNavbar } from "@/components/nav/AgentNavbar";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -17,25 +14,28 @@ export default async function MainLayout({ children }: MainLayoutProps) {
 
   console.log("server_user", user, token);
 
-  if (!token) {
-    redirect("/login");
+  if (!token || !user) {
+    redirect("/auth/signin");
   }
 
-  if (user.role !== "admin") {
-    redirect("/");
+  if (user.role !== "agent") {
+    redirect("/admin");
   }
 
   return (
     <div className="bg-background text-foreground ">
       <div className="">
-        <AdminNavbar />
+        <AgentNavbar />
 
-        <div className="flex">
-          <div className="hidden md:block h-screen w-75">
-            <Sidebar />
+        <main className="px-4 min-h-screen sm:px-6 lg:px-8 ">
+          <div className="max-w-7xl mx-auto">
+            <br />
+            <br />
+            <br />
+
+            {children}
           </div>
-          <div className="p-5 w-full md:max-w-285">{children}</div>
-        </div>
+        </main>
       </div>
     </div>
   );

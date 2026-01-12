@@ -21,7 +21,6 @@ import {
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { toast } from "sonner";
 import { apiService } from "@/lib/services/apiService";
-import { useActivateTaxpayer } from "@/lib/hooks/agent.hook";
 
 interface RecentPayment {
   id: string;
@@ -48,12 +47,6 @@ export default function AgentScanner() {
   const [loading, setLoading] = useState(false);
   const [vehicleData, setVehicleData] = useState<VehicleData | null>(null);
   const [paymentAmount, setPaymentAmount] = useState("");
-
-  const { mutate: activateTaxpayer } = useActivateTaxpayer();
-
-  const handleActivate = () => {
-    activateTaxpayer();
-  };
 
   // 1. Search Logic - Direct endpoint like Postman
   const handleSearch = async (query: string) => {
@@ -225,7 +218,6 @@ export default function AgentScanner() {
                       <AlertCircle className="h-3 w-3" />
                       Inactive
                     </span>
-                    <Button onClick={handleActivate}>Activate</Button>
                   </div>
                 )}
               </div>
@@ -261,18 +253,6 @@ export default function AgentScanner() {
                   </AlertDescription>
                 </Alert>
               )}
-
-              {/* FINANCIAL SUMMARY */}
-              <Card className="bg-blue-50 border-blue-200">
-                <CardContent className="pt-4 pb-4">
-                  <p className="text-xs text-blue-700 font-medium mb-1">
-                    Total Paid
-                  </p>
-                  <p className="text-xl font-bold text-blue-900">
-                    ₦{vehicleData.total_paid.toLocaleString()}
-                  </p>
-                </CardContent>
-              </Card>
 
               {/* PAYMENT FORM */}
               <div className="space-y-3 pt-2">

@@ -3,11 +3,11 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { agentApi } from "../api/agent.api";
 
-export const useActivateTaxpayer = () => {
+export const useAddVehicle = () => {
   return useMutation({
-    mutationFn: () => agentApi.activateTaxpayer(),
+    mutationFn: (data: any) => agentApi.addVehicle(data),
     onSuccess: () => {
-      toast.success("Taxpayer activated successfully!");
+      toast.success("vehicle added successfully!");
     },
   });
 };

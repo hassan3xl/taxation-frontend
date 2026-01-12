@@ -3,7 +3,7 @@ import Trips from "@/components/trips/Trips";
 import { useAuth } from "@/contexts/AuthContext";
 import React from "react";
 
-const Main = () => {
+const MainHome = () => {
   return (
     <div>
       <Dashboard />
@@ -11,4 +11,4 @@ const Main = () => {
   );
 };
 
-export default Main;
+export default MainHome;

@@ -33,7 +33,7 @@ interface VehicleDetails {
   plate_number: string;
   owner_name: string;
   phone_number: string;
-  registration_date: string;
+  created_at: string;
   is_active: boolean;
   current_balance: number;
   total_paid: number;
@@ -68,7 +68,7 @@ const Dashboard = () => {
         <Card className="max-w-md w-full">
           <CardContent className="pt-6 text-center">
             <Car className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-            <p className="text-muted-foreground">No vehicles found</p>
+            <p className="text-muted-foreground">No vehicle found</p>
           </CardContent>
         </Card>
       </div>
@@ -78,20 +78,6 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen">
       <div className="max-w-6xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-bold text-primary">My Vehicles</h1>
-            <p className="text-slate-600 mt-1">
-              Manage your registered vehicles
-            </p>
-          </div>
-          <Button className="bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-200">
-            <Plus className="mr-2 h-4 w-4" />
-            Add Vehicle
-          </Button>
-        </div>
-
         {/* Vehicle Cards */}
         {vehiclesDetails.map((vehicle: VehicleDetails) => (
           <Card key={vehicle.id} className="overflow-hidden shadow-xl border-0">
@@ -101,18 +87,24 @@ const Dashboard = () => {
               <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-24 -translate-x-24"></div>
 
               <div className="relative z-10">
-                <div className="flex items-start justify-between mb-6">
+                <div className="flex p-2 items-start justify-between mb-6">
                   <div className="flex items-center gap-3">
                     <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
                       <Car className="h-6 w-6" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium opacity-90">
-                        License Plate
-                      </p>
                       <h2 className="text-3xl md:text-4xl font-bold tracking-wider mt-1">
                         {vehicle.plate_number}
                       </h2>
+                      <div className="flex items-center gap-2 text-primary">
+                        <Calendar className="h-4 w-4" />
+                        <span className="text-sm font-medium">
+                          Registered on:
+                        </span>
+                        <span className="text-sm">
+                          {formatDate(vehicle.created_at)}
+                        </span>
+                      </div>
                     </div>
                   </div>
                   <Badge
@@ -133,7 +125,7 @@ const Dashboard = () => {
                   </Badge>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid p-2 grid-cols-2 gap-4">
                   <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3">
                     <User className="h-4 w-4 mb-1 opacity-75" />
                     <p className="text-xs opacity-75">Owner</p>
@@ -159,8 +151,8 @@ const Dashboard = () => {
                   <Wallet className="h-5 w-5 text-blue-600" />
                   Financial Overview
                 </h3>
-                <div className="grid sm:grid-cols-2 gap-4">
-                  <Card className="bg-gradient-to-br from-green-50 to-emerald-50 border-green-200">
+                <div className="grid sm:grid-cols-1 gap-4">
+                  <Card className="bg-linear-to-br from-green-50 to-emerald-50 border-green-200">
                     <CardContent className="pt-6">
                       <div className="flex items-center justify-between">
                         <div>
@@ -173,24 +165,6 @@ const Dashboard = () => {
                         </div>
                         <div className="p-3 bg-green-600 rounded-full">
                           <Wallet className="h-5 w-5 text-white" />
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200">
-                    <CardContent className="pt-6">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-xs font-medium text-blue-700 mb-1">
-                            Total Paid
-                          </p>
-                          <p className="text-2xl font-bold text-blue-900">
-                            {formatCurrency(vehicle.total_paid)}
-                          </p>
-                        </div>
-                        <div className="p-3 bg-blue-600 rounded-full">
-                          <CreditCard className="h-5 w-5 text-white" />
                         </div>
                       </div>
                     </CardContent>
@@ -221,7 +195,7 @@ const Dashboard = () => {
                                 <p className="font-semibold text-primary">
                                   {formatCurrency(parseFloat(payment.amount))}
                                 </p>
-                                <p className="text-xs text-slate-600 mt-0.5">
+                                <p className="text-xs text-secondary-foreground mt-0.5">
                                   {formatDate(payment.timestamp)}
                                 </p>
                               </div>
@@ -236,19 +210,6 @@ const Dashboard = () => {
                   </div>
                 </div>
               )}
-
-              {/* Registration Info */}
-              <Card className="bg-card border-slate-200">
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-2 text-primary">
-                    <Calendar className="h-4 w-4" />
-                    <span className="text-sm font-medium">Registered on:</span>
-                    <span className="text-sm">
-                      {formatDate(vehicle.registration_date)}
-                    </span>
-                  </div>
-                </CardContent>
-              </Card>
 
               {/* Action Buttons */}
               <div className="grid grid-cols-2 gap-3 pt-2">

@@ -9,12 +9,15 @@ import {
   MessageCircleCode,
   MessageCircleDashedIcon,
   MessageCircleReply,
-  Scan,
+  Plus,
   X,
 } from "lucide-react";
 import { AccountDropdown } from "./AccountDropdown";
+import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/navigation";
 
-export function Navbar() {
+export function AgentNavbar() {
+  const router = useRouter();
   return (
     <nav className="fixed top-0 left-0 border right-0 z-50 ">
       {/* Container to handle padding and max width */}
@@ -27,9 +30,7 @@ export function Navbar() {
           </div>
 
           <div className="flex gap-4 items-center">
-            <Link href={`/public`}>
-              <Scan />
-            </Link>
+            <Plus onClick={() => router.push("/agent/onboard-drivers")} />
             <AccountDropdown />
           </div>
         </div>

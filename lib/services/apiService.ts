@@ -120,6 +120,17 @@ export const apiService = {
     });
   },
 
+  getWithoutToken: async function (url: string, data?: any): Promise<any> {
+    return fetchWithCatch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+  },
+
   // Now handles both JSON and FormData automatically
   post: async function (url: string, data?: any): Promise<any> {
     const options = await createRequestOptions("POST", data);

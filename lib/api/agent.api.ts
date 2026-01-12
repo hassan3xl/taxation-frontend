@@ -1,8 +1,8 @@
 import { apiService } from "../services/apiService";
 
 export const agentApi = {
-  activateTaxpayer: async () => {
-    const res = await apiService.post("/taxations.agent/activate/");
+  addVehicle: async (data: any) => {
+    const res = await apiService.post("/taxations/agent/vehicles/", data);
     return res;
   },
 };

@@ -10,31 +10,21 @@ interface MainLayoutProps {
 export default async function MainLayout({ children }: MainLayoutProps) {
   const user = await getCurrentUser();
 
-  console.log("server_user", user);
-
   if (!user) {
-    redirect("/login");
+    redirect("/public");
   }
 
-  if (user.role !== "taxpayer") {
+  if (user?.role !== "taxpayer") {
     redirect("/agent");
   }
 
   return (
-    <div className="bg-background text-foreground ">
-      <div className="">
-        <Navbar />
+    <div className="bg-background text-foreground min-h-screen flex flex-col">
+      <Navbar />
 
-        <main className="px-4 min-h-screen sm:px-6 lg:px-8 ">
-          <div className="max-w-7xl mx-auto">
-            <br />
-            <br />
-            <br />
-
-            {children}
-          </div>
-        </main>
-      </div>
+      <main className="flex-1 pt-16 px-4  sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto overflow-auto pb-6">{children}</div>
+      </main>
     </div>
   );
 }

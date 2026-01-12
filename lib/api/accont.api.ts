@@ -10,7 +10,7 @@ export const accountApi = {
     return res;
   },
   getAgentProfile: async () => {
-    const res = await apiService.get("/profile/agent/");
+    const res = await apiService.get("/profile/me/");
     return res;
   },
 };

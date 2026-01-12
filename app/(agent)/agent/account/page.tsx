@@ -8,14 +8,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useQuery } from "@tanstack/react-query"; // Assuming you use TanStack Query
 import { Spinner } from "@/components/ui/spinner";
 import { toast } from "sonner";
-import { useGetBookingHistory } from "@/lib/hooks/bookings.hook";
 import { BookingCard } from "@/components/bookings/BookingsCard";
 import { useAuth } from "@/contexts/AuthContext";
 import { useGetAgentProfile } from "@/lib/hooks/account.hook";
+import LogoutButton from "@/components/auth/LogoutButton";
 
 export default function AgentAccountPage() {
   const { data: agent, isLoading, isError } = useGetAgentProfile();
-  const { user } = useAuth();
+  // const { user } = useAuth();
 
   console.log("user", agent);
   if (isLoading) {
@@ -37,21 +37,17 @@ export default function AgentAccountPage() {
   return (
     <div className="pb-20">
       <div className="max-w-5xl pt-10">
-        <div className="flex items-center gap-4 mb-8">
-          <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center">
-            <UserCircle className="h-8 w-8 text-primary" />
-          </div>
+        <div className="flex justify-between items-center gap-4 mb-8">
           <div>
-            <p className="font-semibold">Full Name</p>
-            <p className="text-muted-foreground text-sm">{user?.email}</p>
+            <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center">
+              <UserCircle className="h-8 w-8 text-primary" />
+            </div>
+            <div>
+              <p className="font-semibold">Full Name</p>
+              <p className="text-muted-foreground text-sm">{agent?.email}</p>
+            </div>
           </div>
-          <Button
-            variant="outline"
-            className="ml-auto gap-2 text-red-600 hover:text-red-700 hover:bg-red-50"
-          >
-            <LogOut className="" />
-            Sign Out
-          </Button>
+          <LogoutButton />
         </div>
 
         {/* --- Tabs / Navigation --- */}
