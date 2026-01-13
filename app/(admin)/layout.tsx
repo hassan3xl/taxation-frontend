@@ -6,6 +6,7 @@ import { getAccessToken } from "@/lib/actions/auth.actions";
 import { cookies } from "next/headers";
 import { getCurrentUser } from "@/lib/auth";
 import Sidebar from "@/components/admin/Sidebar";
+import { SidebarProvider } from "@/contexts/SidebarContext";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -23,17 +24,21 @@ export default async function MainLayout({ children }: MainLayoutProps) {
   }
 
   return (
-    <div className="bg-background text-foreground ">
-      <div className="">
-        <AdminNavbar />
+    <SidebarProvider>
+      <div className="bg-background text-foreground ">
+        <div className="">
+          <AdminNavbar />
 
-        <div className="flex">
-          <div className="hidden md:block h-screen w-75">
-            <Sidebar />
+          <div className="flex mt-20">
+            <div className="">
+              <Sidebar />
+            </div>
+            <div className="p-5  ml-0 md:ml-60 w-full md:max-w-285">
+              {children}
+            </div>
           </div>
-          <div className="p-5 w-full md:max-w-285">{children}</div>
         </div>
       </div>
-    </div>
+    </SidebarProvider>
   );
 }

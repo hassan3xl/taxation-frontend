@@ -24,6 +24,7 @@ import { apiService } from "@/lib/services/apiService";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { FormInput } from "@/components/FormInput";
 import { ReportIssueDialog } from "@/components/admin/ReportIssueDialog";
+import VehicleScanner from "@/components/Vehicles/VehicleScanner";
 
 interface RecentPayment {
   id: string;
@@ -124,84 +125,12 @@ export default function AgentScanner() {
   return (
     <div className="min-h-screen p-2 pb-20">
       <div className="max-w-xl mx-auto space-y-6">
-        {/* HEADER */}
-        <div className="flex border py-2 px-4 rounded-lg border-border bg-card justify-between items-center">
-          <div>
-            <p className="text-sm font-semibold text-secondary-foreground">
-              Scan or search vehicles
-            </p>
-          </div>
-          <div className="flex gap-2">
-            <Button
-              variant={mode === "SCAN" ? "default" : "outline"}
-              size="icon"
-              onClick={() => setMode("SCAN")}
-              className={mode === "SCAN" ? "bg-blue-600" : ""}
-            >
-              <Camera className="h-5 w-5" />
-            </Button>
-            <Button
-              variant={mode === "MANUAL" ? "default" : "outline"}
-              size="icon"
-              onClick={() => setMode("MANUAL")}
-              className={mode === "MANUAL" ? "bg-blue-600" : ""}
-            >
-              <Search className="h-5 w-5" />
-            </Button>
-          </div>
-        </div>
-
-        {/* SCANNER AREA */}
-        {mode === "SCAN" && (
-          <Card className="overflow-hidden border-2 border-border">
-            <div className="aspect-square bg-black relative">
-              <Scanner
-                onScan={(data: any) => {
-                  if (data) {
-                    handleSearch(data);
-                  }
-                }}
-              />
-              <div className="absolute inset-0 border-4 border-blue-500/50 z-10 pointer-events-none m-8 rounded-lg animate-pulse" />
-            </div>
-            <CardFooter className="bg-muted p-3 text-center text-sm text-blue-700 font-medium">
-              Point camera at Vehicle QR Code
-            </CardFooter>
-          </Card>
-        )}
-
-        {/* MANUAL SEARCH AREA */}
-        {mode === "MANUAL" && (
-          <Card className="shadow-lg">
-            <CardContent className="pt-6">
-              <div className="flex gap-2">
-                <Input
-                  placeholder="Enter Plate Number (e.g. AD-1234)"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value.toUpperCase())}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      handleSearch(searchQuery);
-                    }
-                  }}
-                  className="text-lg uppercase font-semibold"
-                  disabled={loading}
-                />
-                <Button
-                  onClick={() => handleSearch(searchQuery)}
-                  disabled={loading || !searchQuery.trim()}
-                  className="bg-blue-600 hover:bg-blue-700"
-                >
-                  {loading ? (
-                    <Loader2 className="h-5 w-5 animate-spin" />
-                  ) : (
-                    <Search className="h-5 w-5" />
-                  )}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        )}
+        <VehicleScanner
+          loading={loading}
+          handleSearch={handleSearch}
+          mode={mode}
+          setMode={setMode}
+        />
 
         {/* VEHICLE RESULT CARD */}
         {vehicleData && (

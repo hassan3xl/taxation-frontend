@@ -40,11 +40,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { formatDistanceToNow } from "date-fns";
 import { ReportIssueDialog } from "@/components/admin/ReportIssueDialog";
+import clsx from "clsx";
 
 const AdminVehicles = () => {
   const { data: vehicles, isLoading } = useAdminGetVehicles();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+
+  console.log(vehicles);
 
   // State for the Report Issue Modal
   const [selectedVehicle, setSelectedVehicle] = useState<any>(null);
@@ -197,12 +200,13 @@ const AdminVehicles = () => {
         {filteredVehicles.map((vehicle: any) => (
           <Card
             key={vehicle.id}
-            className={`transition-all hover:shadow-md ${
-              !vehicle.is_active ||
-              vehicle.compliance_status === "INACTIVE_DUE_TO_DEBT"
-                ? "bg-slate-50 border-red-100"
-                : ""
-            }`}
+            className={clsx("transition-all hover:shadow-md", {
+              "bg-muted border-yellow-400":
+                vehicle.compliance_status === "INACTIVE_MANUAL",
+
+              "bg-red-50 border-red-500":
+                vehicle.compliance_status === "INACTIVE_DUE_TO_DEBT",
+            })}
           >
             <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
               <div className="space-y-1">

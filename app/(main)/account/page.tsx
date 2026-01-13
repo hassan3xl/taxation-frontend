@@ -10,6 +10,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import { useGetTaxpayerProfile } from "@/lib/hooks/account.hook";
+import LogoutButton from "@/components/auth/LogoutButton";
 
 export default function AccountPage() {
   const { data: taxpayer, isLoading, isError } = useGetTaxpayerProfile();
@@ -43,13 +44,7 @@ export default function AccountPage() {
             <p className="font-semibold">Full Name</p>
             <p className="text-muted-foreground text-sm">{user?.email}</p>
           </div>
-          <Button
-            variant="outline"
-            className="ml-auto gap-2 text-red-600 hover:text-red-700 hover:bg-red-50"
-          >
-            <LogOut className="" />
-            Sign Out
-          </Button>
+          <LogoutButton />
         </div>
 
         {/* --- Tabs / Navigation --- */}
