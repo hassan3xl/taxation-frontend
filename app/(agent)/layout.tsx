@@ -12,8 +12,6 @@ export default async function AgentLayout({ children }: AgentLayoutProps) {
   const token = await getAccessToken();
   const user = await getCurrentUser();
 
-  console.log("server_user", user, token);
-
   if (!token || !user) {
     redirect("/auth/signin");
   }
