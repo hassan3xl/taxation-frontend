@@ -16,7 +16,6 @@ import {
   CardTitle,
   CardHeader,
 } from "@/components/ui/card";
-import data from "./data/analytics";
 
 const AnalyticsCharts = () => {
   return (
@@ -29,7 +28,7 @@ const AnalyticsCharts = () => {
         <CardContent>
           <div style={{ width: "100%", height: "300" }}>
             <ResponsiveContainer>
-              <LineChart width={1100} height={400} data={data}>
+              <LineChart width={1100} height={400}>
                 <Line type="monotone" dataKey="pv" stroke="#8884d8" />
                 <CartesianGrid stroke="#ccc" />
                 <XAxis dataKey="name" />

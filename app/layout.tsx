@@ -17,8 +17,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Tax-me",
-  description: "book our trips now!",
+  title: "Taxon",
+  description:
+    "Automating Daily Transportation Tax Collection Without Leakages",
 };
 
 export default function RootLayout({

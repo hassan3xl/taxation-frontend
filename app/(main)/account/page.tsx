@@ -8,8 +8,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useQuery } from "@tanstack/react-query"; // Assuming you use TanStack Query
 import { Spinner } from "@/components/ui/spinner";
 import { toast } from "sonner";
-import { useGetBookingHistory } from "@/lib/hooks/bookings.hook";
-import { BookingCard } from "@/components/bookings/BookingsCard";
 import { useAuth } from "@/contexts/AuthContext";
 import { useGetTaxpayerProfile } from "@/lib/hooks/account.hook";
 

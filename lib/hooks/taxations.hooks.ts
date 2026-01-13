@@ -24,7 +24,7 @@ export function useRequestOTP() {
 export function useVerifyOTP() {
   return useMutation({
     mutationKey: [],
-    mutationFn: (otp: string) => taxationApi.verifyOTP(otp),
+    mutationFn: (otp: any) => taxationApi.verifyOTP(otp),
     onSuccess: () => {
       toast.success("OTP verified successfully!");
     },

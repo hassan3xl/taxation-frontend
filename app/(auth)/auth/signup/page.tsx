@@ -19,7 +19,7 @@ const PASSWORD_REGEX =
 
 type SignupForm = {
   email: string;
-  password1: string;
+  password: string;
   password2: string;
   agreeToTerms: boolean;
 };
@@ -34,7 +34,7 @@ const SignupPage = () => {
   } = useForm<SignupForm>();
 
   const router = useRouter();
-  const password1Val = watch("password1");
+  const password1Val = watch("password");
 
   const { mutateAsync: signupHook, isPending: loading } = useSignup();
 
@@ -47,7 +47,7 @@ const SignupPage = () => {
     try {
       const response = await signupHook({
         email: data.email,
-        password1: data.password1,
+        password: data.password,
         password2: data.password2,
       });
 
@@ -114,7 +114,7 @@ const SignupPage = () => {
               <FormInput
                 icon={Lock}
                 type="password"
-                name="password1"
+                name="password"
                 placeholder="Create a password"
                 register={register}
                 rules={{
@@ -126,9 +126,9 @@ const SignupPage = () => {
                 }}
               />
               {/* Optional: Password requirements hint */}
-              {errors.password1 && (
+              {errors.password && (
                 <p className="text-xs text-destructive mt-1 flex items-center gap-1">
-                  <AlertCircle size={12} /> {errors.password1.message}
+                  <AlertCircle size={12} /> {errors.password.message}
                 </p>
               )}
             </div>

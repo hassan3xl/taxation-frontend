@@ -12,13 +12,10 @@ interface MainLayoutProps {
 }
 
 export default async function MainLayout({ children }: MainLayoutProps) {
-  const token = await getAccessToken();
   const user = await getCurrentUser();
 
-  console.log("server_user", user, token);
-
-  if (!token) {
-    redirect("/login");
+  if (!user) {
+    redirect("/auth/signin");
   }
 
   if (user.role !== "admin") {

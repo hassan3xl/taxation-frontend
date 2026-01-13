@@ -18,6 +18,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useGetVehicles } from "@/lib/hooks/taxations.hooks";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { PaymentButton } from "./PaymentButton";
 
 // Type definitions
 interface RecentPayment {
@@ -45,10 +47,7 @@ const Dashboard = () => {
   const { data: vehiclesDetails } = useGetVehicles();
   console.log("vehiclesDetails", vehiclesDetails);
   const router = useRouter();
-
-  if (vehiclesDetails?.length < 1) {
-    router.push("/new");
-  }
+  const [openPaymentDialog, setOpenPaymentDialog] = React.useState(false);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -69,6 +68,10 @@ const Dashboard = () => {
           <CardContent className="pt-6 text-center">
             <Car className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
             <p className="text-muted-foreground">No vehicle found</p>
+            <br />
+            <Link href={`/new`} className="">
+              <Button>Get Started</Button>
+            </Link>
           </CardContent>
         </Card>
       </div>
@@ -163,9 +166,10 @@ const Dashboard = () => {
                             {formatCurrency(vehicle.current_balance)}
                           </p>
                         </div>
-                        <div className="p-3 bg-green-600 rounded-full">
-                          <Wallet className="h-5 w-5 text-white" />
-                        </div>
+                        <PaymentButton
+                          open={openPaymentDialog}
+                          onOpenChange={setOpenPaymentDialog}
+                        />
                       </div>
                     </CardContent>
                   </Card>
@@ -190,13 +194,14 @@ const Dashboard = () => {
                               </div>
                               <div>
                                 <p className="text-secondary-foreground">
-                                  {payment.payment_method}
-                                </p>
-                                <p className="font-semibold text-primary">
-                                  {formatCurrency(parseFloat(payment.amount))}
+                                  TRX ID: {payment.id.trim().slice(0, 8)}...
                                 </p>
                                 <p className="text-xs text-secondary-foreground mt-0.5">
-                                  {formatDate(payment.timestamp)}
+                                  Date: {formatDate(payment.timestamp)}
+                                </p>
+                                <p className="font-semibold text-primary">
+                                  Amount:{" "}
+                                  {formatCurrency(parseFloat(payment.amount))}
                                 </p>
                               </div>
                             </div>
@@ -213,20 +218,19 @@ const Dashboard = () => {
 
               {/* Action Buttons */}
               <div className="grid grid-cols-2 gap-3 pt-2">
-                <Button
-                  variant="outline"
-                  className="w-full border-2 hover:bg-blue-50 hover:border-blue-300"
-                >
-                  <History className="mr-2 h-4 w-4" />
-                  View History
-                </Button>
-                <Button
-                  variant="outline"
-                  className="w-full border-2 hover:bg-slate-100"
-                >
-                  <Settings className="mr-2 h-4 w-4" />
-                  Settings
-                </Button>
+                <Link href={`/history`}>
+                  <Button className="w-full">
+                    <History className="mr-2 h-4 w-4" />
+                    History
+                  </Button>
+                </Link>
+
+                <Link href={`/settings`}>
+                  <Button className="w-full">
+                    <Settings className="mr-2 h-4 w-4" />
+                    Settings
+                  </Button>
+                </Link>
               </div>
             </CardContent>
           </Card>

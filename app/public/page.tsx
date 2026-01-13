@@ -119,8 +119,11 @@ export default function HomePage() {
             <Card className="overflow-hidden border-2 border-border">
               <div className="aspect-square bg-black relative">
                 <Scanner
-                  onScan={(text) => handleSearch(text)}
-                  // onError={(error) => console.log(error?.message)}
+                  onScan={(data: any) => {
+                    if (data) {
+                      handleSearch(data);
+                    }
+                  }}
                 />
                 <div className="absolute inset-0 border-4 border-blue-500/50 z-10 pointer-events-none m-8 rounded-lg animate-pulse" />
               </div>

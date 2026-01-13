@@ -21,6 +21,9 @@ import {
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { toast } from "sonner";
 import { apiService } from "@/lib/services/apiService";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { FormInput } from "@/components/FormInput";
+import { ReportIssueDialog } from "@/components/admin/ReportIssueDialog";
 
 interface RecentPayment {
   id: string;
@@ -38,7 +41,10 @@ interface VehicleData {
   current_balance: number;
   total_paid: number;
   total_expected_revenue: number;
+  compliance_status: string;
   recent_payments: RecentPayment[];
+  created_at: Date;
+  updated_at: Date;
 }
 
 export default function AgentScanner() {
@@ -48,6 +54,9 @@ export default function AgentScanner() {
   const [vehicleData, setVehicleData] = useState<VehicleData | null>(null);
   const [paymentAmount, setPaymentAmount] = useState("");
 
+  const [openDialog, setOpenDialog] = useState(false);
+
+  console.log("vehicleData", vehicleData);
   // 1. Search Logic - Direct endpoint like Postman
   const handleSearch = async (query: string) => {
     if (!query.trim()) {
@@ -147,8 +156,11 @@ export default function AgentScanner() {
           <Card className="overflow-hidden border-2 border-border">
             <div className="aspect-square bg-black relative">
               <Scanner
-                onResult={(text) => handleSearch(text)}
-                onError={(error) => console.log(error?.message)}
+                onScan={(data: any) => {
+                  if (data) {
+                    handleSearch(data);
+                  }
+                }}
               />
               <div className="absolute inset-0 border-4 border-blue-500/50 z-10 pointer-events-none m-8 rounded-lg animate-pulse" />
             </div>
@@ -225,6 +237,12 @@ export default function AgentScanner() {
 
             <CardContent className="pt-6 space-y-6">
               {/* STATUS INDICATOR */}
+              {vehicleData.compliance_status === "INACTIVE_DUE_TO_DEBT" && (
+                <div className="bg-red-500 text-white p-4 rounded">
+                  ⛔ THIS VEHICLE IS SUSPENDED.
+                  <p>You have missed payments for over 7 days.</p>
+                </div>
+              )}
               {vehicleData.current_balance < 0 ? (
                 <Alert
                   variant="destructive"
@@ -254,6 +272,12 @@ export default function AgentScanner() {
                 </Alert>
               )}
 
+              <ReportIssueDialog
+                open={openDialog}
+                onOpenChange={setOpenDialog}
+                vehicleId={vehicleData.id}
+                plateNumber={vehicleData.plate_number}
+              />
               {/* PAYMENT FORM */}
               <div className="space-y-3 pt-2">
                 <label className="text-sm font-bold text-primary uppercase tracking-wide">
@@ -339,7 +363,7 @@ export default function AgentScanner() {
             <CardContent className="pt-12 pb-12 text-center">
               <Search className="h-12 w-12 text-primary mx-auto mb-3" />
               <p className="text-secondary-foreground">
-                Enter a plate number to search
+                Enter a plate number or scan to search vehicle
               </p>
             </CardContent>
           </Card>

@@ -14,7 +14,7 @@ export const AdminNavbar = () => {
   return (
     <div className="bg-sidebar py-2 px-5 flex justify-between text-white">
       <Link href="/">
-        <h2>tax-me</h2>
+        <h2>Taxon</h2>
       </Link>
 
       <div className="flex items-center">

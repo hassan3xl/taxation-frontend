@@ -4,11 +4,11 @@ import { getAccessToken } from "@/lib/actions/auth.actions";
 import { getCurrentUser } from "@/lib/auth";
 import { AgentNavbar } from "@/components/nav/AgentNavbar";
 
-interface MainLayoutProps {
+interface AgentLayoutProps {
   children: React.ReactNode;
 }
 
-export default async function MainLayout({ children }: MainLayoutProps) {
+export default async function AgentLayout({ children }: AgentLayoutProps) {
   const token = await getAccessToken();
   const user = await getCurrentUser();
 

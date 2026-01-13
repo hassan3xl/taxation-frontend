@@ -22,27 +22,31 @@ const TaxpayerOnboardingPage = () => {
     } catch (error) {}
   };
   return (
-    <div className="max-w-xl items-center justify-center">
-      <form action="" onSubmit={handleSubmit(onSubmit)}>
+    <div className="max-w-xl mx-auto items-center justify-center">
+      <form
+        action=""
+        className="bg-card rounded-md p-4"
+        onSubmit={handleSubmit(onSubmit)}
+      >
         <FormInput
           register={register}
           name="plate_number"
           label="Plate Number"
-          placeholder=""
+          placeholder="Plate Number"
           required
         />
         <FormInput
           register={register}
           name="owner_name"
           label="Owner Name"
-          placeholder=""
+          placeholder="Enter Driver's Name"
           required
         />
         <FormInput
           register={register}
           name="phone_number"
           label="Phone Number"
-          placeholder=""
+          placeholder="Phone Number"
           required
         />
         <Button type="submit">Add Vehicle</Button>

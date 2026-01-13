@@ -8,7 +8,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useQuery } from "@tanstack/react-query"; // Assuming you use TanStack Query
 import { Spinner } from "@/components/ui/spinner";
 import { toast } from "sonner";
-import { BookingCard } from "@/components/bookings/BookingsCard";
 import { useAuth } from "@/contexts/AuthContext";
 import { useGetAgentProfile } from "@/lib/hooks/account.hook";
 import LogoutButton from "@/components/auth/LogoutButton";
@@ -72,7 +71,6 @@ export default function AgentAccountPage() {
             {bookings && bookings.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4">
                 {bookings.map((booking: any) => (
-                  <BookingCard key={booking.id} booking={booking} />
                 ))}
               </div>
             ) : (
