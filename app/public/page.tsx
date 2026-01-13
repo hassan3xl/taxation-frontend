@@ -23,6 +23,9 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { toast } from "sonner";
 import { apiService } from "@/lib/services/apiService";
 import { Navbar } from "@/components/nav/Navbar";
+import Link from "next/link";
+import { AccountDropdown } from "@/components/nav/AccountDropdown";
+import { formatPlate } from "@/lib/utils";
 
 interface RecentPayment {
   id: string;
@@ -61,7 +64,6 @@ export default function HomePage() {
     setVehicleData(null);
 
     try {
-      // Direct URL just like in Postman: /api/taxations/agent/vehicles/AD-1234/
       const res = await apiService.getWithoutToken(
         `/taxations/agent/public/${query.trim().toUpperCase()}/`
       );
@@ -84,7 +86,22 @@ export default function HomePage() {
 
   return (
     <>
-      <Navbar />
+      <nav className=" top-0 left-0 border right-0 z-50 ">
+        {/* Container to handle padding and max width */}
+        <div className="w-full bg-sidebar">
+          <div className="flex items-center justify-between h-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+            <div className="flex items-center">
+              <Link href="/" className="rounded-md ml-2 p-2">
+                Taxon
+              </Link>
+            </div>
+
+            <div className="flex gap-4 items-center">
+              <AccountDropdown />
+            </div>
+          </div>
+        </div>
+      </nav>
       <div className="min-h-screen mt-18 p-2">
         <div className="max-w-xl mx-auto space-y-6">
           {/* HEADER */}
@@ -119,14 +136,30 @@ export default function HomePage() {
             <Card className="overflow-hidden border-2 border-border">
               <div className="aspect-square bg-black relative">
                 <Scanner
-                  onScan={(data: any) => {
-                    if (data) {
-                      handleSearch(data);
-                    }
+                  constraints={{
+                    facingMode: "environment",
+                  }}
+                  onScan={(result) => {
+                    if (!result || result.length === 0) return;
+
+                    const qrValue = result[0]?.rawValue;
+                    if (!qrValue) return;
+
+                    // Stop scanning immediately
+                    setMode("MANUAL");
+                    setSearchQuery(qrValue.toUpperCase());
+
+                    handleSearch(qrValue);
+                  }}
+                  onError={(error) => {
+                    console.error("QR Scan Error:", error);
+                    toast.error("Unable to access camera");
                   }}
                 />
+
                 <div className="absolute inset-0 border-4 border-blue-500/50 z-10 pointer-events-none m-8 rounded-lg animate-pulse" />
               </div>
+
               <CardFooter className="bg-muted p-3 text-center text-sm text-blue-700 font-medium">
                 Point camera at Vehicle QR Code
               </CardFooter>
@@ -139,11 +172,12 @@ export default function HomePage() {
               <CardContent className="pt-6">
                 <div className="flex gap-2">
                   <Input
-                    placeholder="Enter Plate Number (e.g. AD-1234)"
+                    placeholder="Enter Plate Number (e.g. MTA-1234)"
                     value={searchQuery}
-                    onChange={(e) =>
-                      setSearchQuery(e.target.value.toUpperCase())
-                    }
+                    onChange={(e) => {
+                      const formatted = formatPlate(e.target.value);
+                      setSearchQuery(formatted);
+                    }}
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
                         handleSearch(searchQuery);
@@ -152,6 +186,7 @@ export default function HomePage() {
                     className="text-lg uppercase font-semibold"
                     disabled={loading}
                   />
+
                   <Button
                     onClick={() => handleSearch(searchQuery)}
                     disabled={loading || !searchQuery.trim()}

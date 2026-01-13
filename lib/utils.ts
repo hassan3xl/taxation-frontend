@@ -21,6 +21,22 @@ export const formatDate = (dateString: string) => {
   });
 };
 
+export function formatPlate(value: string) {
+  const cleaned = value.toUpperCase().replace(/[^A-Z0-9]/g, "");
+
+  const letters = cleaned.slice(0, 3).replace(/[^A-Z]/g, "");
+  const numbers = cleaned
+    .slice(3)
+    .replace(/[^0-9]/g, "")
+    .slice(0, 4);
+
+  if (letters.length < 3) {
+    return letters;
+  }
+
+  return numbers.length > 0 ? `${letters}-${numbers}` : `${letters}-`;
+}
+
 export const getStatusColor = (status: string) => {
   switch (status.toLowerCase()) {
     case "completed":

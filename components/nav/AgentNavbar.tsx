@@ -15,6 +15,7 @@ import {
 import { AccountDropdown } from "./AccountDropdown";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
+import AgentAddVehicle from "../agents/AgentAddVehicle";
 
 export function AgentNavbar() {
   const router = useRouter();
@@ -30,7 +31,7 @@ export function AgentNavbar() {
           </div>
 
           <div className="flex gap-4 items-center">
-            <Plus onClick={() => router.push("/agent/onboard-drivers")} />
+            <AgentAddVehicle />
             <AccountDropdown />
           </div>
         </div>

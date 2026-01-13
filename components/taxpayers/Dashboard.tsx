@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import {
   Car,
   Calendar,
@@ -37,6 +37,7 @@ interface VehicleDetails {
   phone_number: string;
   created_at: string;
   is_active: boolean;
+  qr_code: string | null;
   current_balance: number;
   total_paid: number;
   total_expected_revenue: number;
@@ -48,6 +49,7 @@ const Dashboard = () => {
   console.log("vehiclesDetails", vehiclesDetails);
   const router = useRouter();
   const [openPaymentDialog, setOpenPaymentDialog] = React.useState(false);
+  const [showScanner, setShowScanner] = useState(false);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -108,6 +110,40 @@ const Dashboard = () => {
                           {formatDate(vehicle.created_at)}
                         </span>
                       </div>
+                    </div>
+                    <div>
+                      {vehicle.qr_code && (
+                        <>
+                          {/* Clickable QR */}
+                          <button
+                            type="button"
+                            onClick={() => setShowScanner(true)}
+                            className="relative group"
+                          >
+                            <img
+                              src={vehicle.qr_code}
+                              alt="Vehicle QR Code"
+                              className="w-20 h-20 rounded-lg border shadow-sm"
+                            />
+
+                            {/* Hover overlay */}
+                            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition flex items-center justify-center rounded-lg">
+                              <span className="text-white text-xs font-semibold">
+                                Tap to Scan
+                              </span>
+                            </div>
+                          </button>
+
+                          {/* Download */}
+                          <a
+                            href={vehicle.qr_code}
+                            download={`${vehicle.plate_number}-qr.png`}
+                            className="text-xs text-primary underline"
+                          >
+                            Download QR
+                          </a>
+                        </>
+                      )}
                     </div>
                   </div>
                   <Badge
