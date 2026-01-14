@@ -1,7 +1,10 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { useAdminGetVehicles } from "@/lib/hooks/admin.hook";
+import {
+  useAdminApproveVehicle,
+  useAdminGetVehicles,
+} from "@/lib/hooks/admin.hook";
 import {
   Card,
   CardContent,
@@ -41,9 +44,12 @@ import {
 import { formatDistanceToNow } from "date-fns";
 import { ReportIssueDialog } from "@/components/admin/ReportIssueDialog";
 import clsx from "clsx";
+import { formatDate } from "@/lib/utils";
 
 const AdminVehicles = () => {
   const { data: vehicles, isLoading } = useAdminGetVehicles();
+  const { mutate: approveVehicle, isPending: isApproving } =
+    useAdminApproveVehicle();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
 
@@ -154,7 +160,7 @@ const AdminVehicles = () => {
   if (isLoading) return <div className="p-8">Loading fleet data...</div>;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 items-center justify-center">
       {/* Header & Controls */}
       <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
         <div>
@@ -196,7 +202,7 @@ const AdminVehicles = () => {
       </div>
 
       {/* Cards Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-2 3xl:grid-cols-3 gap-6">
         {filteredVehicles.map((vehicle: any) => (
           <Card
             key={vehicle.id}
@@ -218,7 +224,25 @@ const AdminVehicles = () => {
                 </CardDescription>
               </div>
               <div className="flex flex-col items-end gap-2">
-                {getStatusBadge(vehicle)}
+                <div className="flex gap-2">
+                  {vehicle.is_approved_by_admin ? (
+                    <Badge className="flex gap-1 items-center bg-green-100">
+                      <ShieldAlert className="w-3 h-3" /> Approved
+                    </Badge>
+                  ) : (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="flex gap-1 items-center"
+                      onClick={() => approveVehicle(vehicle.id)}
+                      disabled={isApproving}
+                    >
+                      <ShieldAlert className="w-3 h-3" />
+                      {isApproving ? "Approving..." : "Approve"}
+                    </Button>
+                  )}
+                  {getStatusBadge(vehicle)}
+                </div>
 
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -301,18 +325,10 @@ const AdminVehicles = () => {
                 <div className="flex items-center gap-1">
                   <Phone className="h-3 w-3" /> {vehicle.phone_number}
                 </div>
-                {vehicle.recent_payments?.length > 0 ? (
-                  <div className="flex items-center gap-1">
-                    <History className="h-3 w-3" />
-                    Last:{" "}
-                    {formatDistanceToNow(
-                      new Date(vehicle.recent_payments[0].timestamp)
-                    )}{" "}
-                    ago
-                  </div>
-                ) : (
-                  <span>No payments yet</span>
-                )}
+                <span>
+                  Joined on {formatDate(vehicle.created_at)} | Approved on{" "}
+                  {formatDate(vehicle?.activated_at)}
+                </span>
               </div>
             </CardFooter>
           </Card>

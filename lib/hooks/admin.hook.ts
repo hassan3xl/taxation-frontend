@@ -64,6 +64,24 @@ export const useAdminGetVehicles = () => {
   });
 };
 
+export const useAdminGetVehicle = (vehicleId: string) => {
+  return useQuery({
+    queryKey: ["vehicle", vehicleId],
+    queryFn: () => adminApi.getVehicle(vehicleId),
+  });
+};
+
+export const useAdminApproveVehicle = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (vehicleId: string) => adminApi.approveVehicle(vehicleId),
+    onSuccess: () => {
+      toast.success("vehicle approved successfully!");
+      queryClient.invalidateQueries({ queryKey: ["vehicles"] });
+    },
+  });
+};
+
 // export const useAdminAddAgent = () => {
 //   return useMutation({
 //     mutationFn: (data: any) => adminApi.addAgent(data),

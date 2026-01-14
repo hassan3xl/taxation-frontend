@@ -2,22 +2,25 @@ import { apiService } from "../services/apiService";
 
 export const adminApi = {
   addVehicle: async (data: any) => {
-    const res = await apiService.post("/taxations/agent/vehicles/", data);
+    const res = await apiService.post("/admin/vehicles/", data);
     return res;
   },
   getVehicles: async () => {
     const res = await apiService.get("/admin/vehicles/");
     return res;
   },
-  getVehicle: async (plateNumber: string) => {
-    const res = await apiService.get(`/admin/agent/vehicles/${plateNumber}/`);
+  getVehicle: async (vehicleId: string) => {
+    const res = await apiService.get(`/admin/vehicles/${vehicleId}/`);
     return res;
   },
 
-  deleteVehicle: async (plateNumber: string) => {
-    const res = await apiService.delete(
-      `/admin/agent/vehicles/${plateNumber}/`
-    );
+  approveVehicle: async (vehicleId: string) => {
+    const res = await apiService.post(`/admin/vehicles/${vehicleId}/approve/`);
+    return res;
+  },
+
+  deleteVehicle: async (vehicleId: string) => {
+    const res = await apiService.delete(`/admin/vehicles/${vehicleId}/`);
     return res;
   },
 
@@ -53,6 +56,25 @@ export const adminApi = {
 
   deleteUser: async (userId: string) => {
     const res = await apiService.delete(`/admin/users/${userId}/`);
+    return res;
+  },
+
+  // finance here
+  getFinanceDashboard: async () => {
+    const res = await apiService.get("/admin/finance/dashboard/");
+    return res;
+  },
+  vehiclesFinance: async () => {
+    const res = await apiService.get(`/admin/vehicles/finance/`);
+    return res;
+  },
+  // payments here
+  adminPayments: async () => {
+    const res = await apiService.get("/admin/payments/");
+    return res;
+  },
+  adminPayment: async (paymentId: string) => {
+    const res = await apiService.get(`/admin/payments/${paymentId}/`);
     return res;
   },
 };

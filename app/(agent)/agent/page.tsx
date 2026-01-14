@@ -124,7 +124,7 @@ export default function AgentScanner() {
 
   return (
     <div className="min-h-screen p-2 pb-20">
-      <div className="max-w-xl mx-auto space-y-6">
+      <div className="">
         <VehicleScanner
           loading={loading}
           handleSearch={handleSearch}
@@ -285,7 +285,7 @@ export default function AgentScanner() {
             </CardContent>
           </Card>
         )}
-
+        <br />
         {/* EMPTY STATE */}
         {!vehicleData && !loading && mode === "MANUAL" && (
           <Card className="bg-card border-dashed border-2">

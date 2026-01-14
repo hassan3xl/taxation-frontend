@@ -42,7 +42,7 @@ const VehicleScanner = ({
 }: VehicleScannerProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   return (
-    <div>
+    <div className="space-y-4">
       <div className="flex border py-2 px-4 rounded-lg border-border bg-card justify-between items-center">
         <div>
           <p className="text-sm font-semibold text-secondary-foreground">

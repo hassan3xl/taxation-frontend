@@ -29,11 +29,11 @@ export default async function MainLayout({ children }: MainLayoutProps) {
         <div className="">
           <AdminNavbar />
 
-          <div className="flex mt-20">
-            <div className="">
+          <div className="flex mt-20 ">
+            <div className="md:mr-60">
               <Sidebar />
             </div>
-            <div className="p-5  ml-0 md:ml-60 w-full md:max-w-285">
+            <div className="max-w-7xl p-4 sm:px-6 lg:px-8 mx-auto w-full">
               {children}
             </div>
           </div>
