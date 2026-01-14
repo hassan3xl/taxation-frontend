@@ -7,7 +7,8 @@ export function useGetPlateNumber(plateNumber: string) {
   return useQuery({
     queryKey: [],
     queryFn: () => taxationApi.getPlateNumber(plateNumber),
-    enabled: !!plateNumber,
+    enabled: Boolean(plateNumber), // 🔑 THIS FIXES EVERYTHING
+    retry: false, // Prevents automatic retries on error
   });
 }
 

@@ -120,18 +120,12 @@ export default function HomePage() {
                     <CardTitle className="text-3xl font-bold text-primary">
                       {vehicleData.plate_number}
                     </CardTitle>
-                    <p className="text-sm text-secondary-foreground mt-1 font-medium">
-                      {vehicleData.owner_name}
-                    </p>
-                    <p className="text-xs text-secondary-foreground mt-0.5">
-                      {vehicleData.phone_number}
-                    </p>
                   </div>
                   {vehicleData.is_active ? (
-                    <span className="bg-green-100 text-green-800 text-xs px-3 py-1.5 rounded-full font-bold flex items-center gap-1">
+                    <div className="bg-green-100 text-green-800 text-xs px-3 py-1.5 rounded-full font-bold flex items-center gap-1">
                       <CheckCircle className="h-3 w-3" />
                       Active
-                    </span>
+                    </div>
                   ) : (
                     <div className="flex gap-2">
                       <span className="bg-red-100 text-red-800 text-xs px-3 py-1.5 rounded-full font-bold flex items-center gap-1">

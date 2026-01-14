@@ -70,13 +70,11 @@ export default function VehicleRegistrationFlow() {
 
   /* -------------------- Effects -------------------- */
 
-  // 1. Reset the API trigger when user starts typing again
-  // This fixes the "locked" feeling. As soon as they type, error clears.
   useEffect(() => {
-    if (queryPlateNumber && plateInputValue !== queryPlateNumber) {
+    if (vehicleNotFound) {
       setQueryPlateNumber("");
     }
-  }, [plateInputValue, queryPlateNumber]);
+  }, [vehicleNotFound]);
 
   // 2. Handle successful vehicle fetch
   useEffect(() => {
@@ -90,8 +88,16 @@ export default function VehicleRegistrationFlow() {
   /* -------------------- Handlers -------------------- */
 
   const onPlateSubmit = (data: { plateNumber: string }) => {
-    // Trigger the API hook by setting state
-    setQueryPlateNumber(data.plateNumber.trim().toUpperCase());
+    const plate = data.plateNumber.trim().toUpperCase();
+
+    if (!plate) return;
+
+    setQueryPlateNumber("");
+
+    // Let React flush state, then trigger query
+    setTimeout(() => {
+      setQueryPlateNumber(plate);
+    }, 0);
   };
 
   const onRequestOtp = async () => {
@@ -245,6 +251,7 @@ export default function VehicleRegistrationFlow() {
                 className="flex-1"
                 onClick={() => {
                   setStep("register");
+                  plateForm.reset();
                   setQueryPlateNumber("");
                 }}
               >
