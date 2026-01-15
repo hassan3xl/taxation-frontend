@@ -1,11 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import {
-  useAdminDeleteUser,
-  useAdminGetUsers,
-  useAdminUpdateUser,
-} from "@/lib/hooks/admin.hook";
+import React, { useState } from "react";
+import { Loader2, UserPlus, Shield, Mail, Phone } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -15,281 +11,139 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { MoreHorizontal, Pencil, Trash, Loader2, Plus } from "lucide-react";
-import { format } from "date-fns"; // Optional: for pretty dates
+import { useGetPotentialAgents } from "@/lib/hooks/admin.hook";
+import {
+  AgentCandidate,
+  PromoteUserDialog,
+} from "@/components/admin/PromoteUserDialog";
 
-type User = {
-  id: string;
-  email: string;
-  role: string;
-  created_at: Date;
-  updated_at: Date;
-};
-const AdminUsers = () => {
-  // 1. Hook Integration
-  // Assuming React Query structure (data, isLoading, mutate)
-  const { data: users, isLoading, error } = useAdminGetUsers();
-  const { mutate: updateUser, isPending: isUpdating } = useAdminUpdateUser();
-  const { mutate: deleteUser, isPending: isDeleting } = useAdminDeleteUser();
+export default function CreateAgentPage() {
+  const { data: candidates, isLoading, isError } = useGetPotentialAgents();
+  const [selectedUser, setSelectedUser] = useState<AgentCandidate | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  // 2. Local State for Modals
-  const [selectedUser, setSelectedUser] = useState<any>(null);
-  const [isEditOpen, setIsEditOpen] = useState(false);
-  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-
-  // Form State
-  const [formData, setFormData] = useState({ email: "", role: "" });
-
-  // 3. Handlers
-  const handleEditClick = (user: any) => {
+  const openPromoteDialog = (user: AgentCandidate) => {
     setSelectedUser(user);
-    setFormData({ email: user.email, role: user.role });
-    setIsEditOpen(true);
-  };
-
-  const handleDeleteClick = (user: any) => {
-    setSelectedUser(user);
-    setIsDeleteOpen(true);
-  };
-
-  const handleUpdateSubmit = (e: any) => {
-    e.preventDefault();
-    if (!selectedUser) return;
-
-    updateUser(
-      { id: selectedUser.id, ...formData },
-      {
-        onSuccess: () => setIsEditOpen(false),
-      }
-    );
-  };
-
-  const handleConfirmDelete = () => {
-    if (!selectedUser) return;
-    deleteUser(selectedUser.id, {
-      onSuccess: () => setIsDeleteOpen(false),
-    });
-  };
-
-  // 4. Role Badge Helper
-  const getRoleBadge = (role: string) => {
-    switch (role) {
-      case "admin":
-        return <Badge variant="destructive">Admin</Badge>;
-      case "agent":
-        return <Badge className="bg-blue-600 hover:bg-blue-700">Agent</Badge>;
-      case "taxpayer":
-        return <Badge variant="secondary">Taxpayer</Badge>;
-      default:
-        return <Badge variant="outline">{role}</Badge>;
-    }
+    setIsDialogOpen(true);
   };
 
   if (isLoading) {
     return (
       <div className="flex h-96 items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
 
-  if (error) {
-    return <div className="text-red-500">Error loading users.</div>;
+  if (isError) {
+    return (
+      <div className="p-8 text-red-500">
+        Failed to load candidates. Ensure you are logged in as admin.
+      </div>
+    );
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
+    <div className="container mx-auto py-10 space-y-6">
+      <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">Users</h2>
+          <h1 className="text-3xl font-bold tracking-tight">
+            Agent Management
+          </h1>
           <p className="text-muted-foreground">
-            Manage system access and roles.
+            Select eligible taxpayers to promote to agent role.
           </p>
         </div>
-        <Button>
-          <Plus className="mr-2 h-4 w-4" /> Add User
-        </Button>
       </div>
 
-      {/* Users Table */}
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Email</TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead>Created At</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {users?.map((user: User) => (
-              <TableRow key={user.id}>
-                <TableCell className="font-medium">{user.email}</TableCell>
-                <TableCell>{getRoleBadge(user.role)}</TableCell>
-                <TableCell className="text-muted-foreground">
-                  {/* Simple date formatting */}
-                  {new Date(user.created_at).toLocaleDateString()}
-                </TableCell>
-                <TableCell className="text-right">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="h-8 w-8 p-0">
-                        <span className="sr-only">Open menu</span>
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                      <DropdownMenuItem onClick={() => handleEditClick(user)}>
-                        <Pencil className="mr-2 h-4 w-4" /> Edit
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => handleDeleteClick(user)}
-                        className="text-red-600 focus:text-red-600"
+      <Card className="classic-shadow-sm border-t-4 border-t-blue-600">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <UserPlus className="h-5 w-5" />
+            Eligible Candidates
+          </CardTitle>
+          <CardDescription>
+            These users currently hold the 'Taxpayer' role and are active.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {candidates && candidates.length > 0 ? (
+            <Table>
+              <TableHeader className="bg-card">
+                <TableRow>
+                  <TableHead>Full Name</TableHead>
+                  <TableHead>Contact Info</TableHead>
+                  <TableHead>Current Role</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {candidates.map((user: any) => (
+                  <TableRow key={user.id} className="hover:bg-slate-50/50">
+                    <TableCell className="font-medium">
+                      <div className="flex items-center gap-2">
+                        <div className="h-8 w-8 rounded-full bg-slate-200 flex items-center justify-center font-bold text-slate-600">
+                          {user.full_name.charAt(0).toUpperCase()}
+                        </div>
+                        {user.full_name}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex flex-col space-y-1 text-sm text-muted-foreground">
+                        <div className="flex items-center gap-1">
+                          <Mail className="h-3 w-3" /> {user.email}
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Phone className="h-3 w-3" /> {user.phone}
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="secondary" className="capitalize">
+                        {user.role}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="border-blue-200 hover:bg-blue-50 text-blue-700 gap-1"
+                        onClick={() => openPromoteDialog(user)}
                       >
-                        <Trash className="mr-2 h-4 w-4" /> Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
-
-      {/* --- Edit User Dialog --- */}
-      <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Edit User</DialogTitle>
-            <DialogDescription>
-              Make changes to the user's role or details here.
-            </DialogDescription>
-          </DialogHeader>
-          <form onSubmit={handleUpdateSubmit}>
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="email" className="text-right">
-                  Email
-                </Label>
-                <Input
-                  id="email"
-                  value={formData.email}
-                  onChange={(e) =>
-                    setFormData({ ...formData, email: e.target.value })
-                  }
-                  className="col-span-3"
-                />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="role" className="text-right">
-                  Role
-                </Label>
-                <div className="col-span-3">
-                  <Select
-                    value={formData.role}
-                    onValueChange={(val) =>
-                      setFormData({ ...formData, role: val })
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a role" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="admin">Admin</SelectItem>
-                      <SelectItem value="agent">Agent</SelectItem>
-                      <SelectItem value="taxpayer">Taxpayer</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
+                        <Shield className="h-4 w-4" />
+                        Make Agent
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          ) : (
+            <div className="text-center py-12 text-muted-foreground">
+              No eligible taxpayers found. They must be registered and active to
+              appear here.
             </div>
-            <DialogFooter>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setIsEditOpen(false)}
-              >
-                Cancel
-              </Button>
-              <Button type="submit" disabled={isUpdating}>
-                {isUpdating && (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                )}
-                Save Changes
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
+          )}
+        </CardContent>
+      </Card>
 
-      {/* --- Delete Confirmation Alert --- */}
-      <AlertDialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the
-              user
-              <span className="font-bold text-foreground">
-                {" "}
-                {selectedUser?.email}{" "}
-              </span>
-              from the database.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleConfirmDelete}
-              className="bg-red-600 hover:bg-red-700"
-              disabled={isDeleting}
-            >
-              {isDeleting ? "Deleting..." : "Delete User"}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      {/* The Dialog Component */}
+      <PromoteUserDialog
+        user={selectedUser}
+        open={isDialogOpen}
+        onOpenChange={(open) => {
+          setIsDialogOpen(open);
+          if (!open) setSelectedUser(null); // Reset on close
+        }}
+      />
     </div>
   );
-};
-
-export default AdminUsers;
+}

@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { adminApi } from "../api/admin.api";
+import { apiService } from "../services/apiService";
 
 // users here
 
@@ -83,39 +84,41 @@ export const useAdminApproveVehicle = () => {
 };
 
 // payment hooks here
-export const useGetAdminFinanceDashboard = () => {
+export const useGetAdminFinanceDashboard = (period: any) => {
   return useQuery({
-    queryKey: ["finance-dashboard"],
-    queryFn: () => adminApi.adminPayments(),
+    queryKey: ["finance-dashboard", period],
+    queryFn: (period: any) => adminApi.adminFinanceDashboard(period),
   });
 };
 
-export const useAdminGetPayments = () => {
+export const useGetPotentialAgents = () => {
   return useQuery({
-    queryKey: ["payments"],
-    queryFn: () => adminApi.adminPayments(),
+    queryKey: ["potential-agents"],
+    queryFn: async () => {
+      const data = await apiService.get("/admin/users/candidates/");
+      return data;
+    },
   });
 };
 
-// export const useAdminAddAgent = () => {
-//   return useMutation({
-//     mutationFn: (data: any) => adminApi.addAgent(data),
-//     onSuccess: () => {
-//       toast.success("agent added successfully!");
-//     },
-//   });
-// };
+export const usePromoteToAgent = () => {
+  const queryClient = useQueryClient();
 
-// export const useAdminGetTaxpayers = () => {
-//   return useQuery({
-//     queryKey: ["taxpayers"],
-//     queryFn: () => adminApi.getTaxpayers(),
-//   });
-// };
-
-// export const useAdminGetAgents = () => {
-//   return useQuery({
-//     queryKey: ["agents"],
-//     queryFn: () => adminApi.getAgents(),
-//   });
-// };
+  return useMutation({
+    mutationFn: async (payload: {
+      user_id: string;
+      station_location?: string;
+    }) => {
+      const { data } = await apiService.post("/admin/users/promote/", payload);
+      return data;
+    },
+    onSuccess: (data) => {
+      toast.success("User successfully promoted to Agent");
+      // Refetch the list so the promoted user disappears
+      queryClient.invalidateQueries({ queryKey: ["potential-agents"] });
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Failed to promote user");
+    },
+  });
+};

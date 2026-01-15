@@ -71,7 +71,7 @@ export default function AgentScanner() {
     try {
       // Direct URL just like in Postman: /api/taxations/agent/vehicles/AD-1234/
       const res = await apiService.get(
-        `/taxations/agent/vehicles/${query.trim().toUpperCase()}/`
+        `/agent/vehicles/${query.trim().toUpperCase()}/`
       );
 
       setVehicleData(res);
@@ -107,7 +107,7 @@ export default function AgentScanner() {
 
     try {
       const res = await apiService.post(
-        `/taxations/agent/vehicles/${vehicleData.plate_number}/pay/`,
+        `/agent/vehicles/${vehicleData.plate_number}/pay/`,
         { amount }
       );
 

@@ -69,8 +69,10 @@ export const adminApi = {
     return res;
   },
   // payments here
-  adminPayments: async () => {
-    const res = await apiService.get("/admin/payments/");
+  adminFinanceDashboard: async (period: any) => {
+    const res = await apiService.getWithArgs("/admin/finance/dashboard/", {
+      params: { period },
+    });
     return res;
   },
   adminPayment: async (paymentId: string) => {

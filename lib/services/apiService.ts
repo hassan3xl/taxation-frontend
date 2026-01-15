@@ -108,6 +108,18 @@ export const apiService = {
       },
     });
   },
+  getWithArgs: async function (url: string, params?: any): Promise<any> {
+    const token = await getAccessToken();
+    return fetchWithCatch(url, {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
 
   postWithoutToken: async function (url: string, data: any): Promise<any> {
     return fetchWithCatch(url, {
