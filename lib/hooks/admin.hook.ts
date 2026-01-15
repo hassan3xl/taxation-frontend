@@ -82,6 +82,21 @@ export const useAdminApproveVehicle = () => {
   });
 };
 
+// payment hooks here
+export const useGetAdminFinanceDashboard = () => {
+  return useQuery({
+    queryKey: ["finance-dashboard"],
+    queryFn: () => adminApi.adminPayments(),
+  });
+};
+
+export const useAdminGetPayments = () => {
+  return useQuery({
+    queryKey: ["payments"],
+    queryFn: () => adminApi.adminPayments(),
+  });
+};
+
 // export const useAdminAddAgent = () => {
 //   return useMutation({
 //     mutationFn: (data: any) => adminApi.addAgent(data),

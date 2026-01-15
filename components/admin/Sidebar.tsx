@@ -68,13 +68,13 @@ const Sidebar = () => {
               </CommandItem>
               <CommandItem>
                 <Folders className="mr-2 h-4 w-4" />
-                <Link onClick={closeSidebar} href="/admin/users">
+                <Link onClick={closeSidebar} href="/admin/exemptions">
                   Exemptions
                 </Link>
               </CommandItem>
               <CommandItem>
                 <Folders className="mr-2 h-4 w-4" />
-                <Link onClick={closeSidebar} href="/admin/users">
+                <Link onClick={closeSidebar} href="/admin/finance">
                   Finance
                 </Link>
               </CommandItem>

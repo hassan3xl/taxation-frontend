@@ -2,6 +2,7 @@
 import AnalyticsCharts from "@/components/admin/AnalyticsCharts";
 import Header from "@/components/Header";
 import { Card, CardContent } from "@/components/ui/card";
+import { useGetAdminFinanceDashboard } from "@/lib/hooks/admin.hook";
 import { sub } from "date-fns";
 import {
   Folder,
@@ -12,6 +13,9 @@ import {
 } from "lucide-react";
 
 export default function Home() {
+  const { data: dashboardStats } = useGetAdminFinanceDashboard();
+
+  // console.log("dashboard stats", dashboardStats);
   const dashboard = {
     title: "Dashboard",
     subtitle: "Welcome back, Admin!",

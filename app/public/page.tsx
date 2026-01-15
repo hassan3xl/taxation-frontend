@@ -53,6 +53,7 @@ export default function HomePage() {
   const [vehicleData, setVehicleData] = useState<VehicleData | null>(null);
   const [paymentAmount, setPaymentAmount] = useState("");
 
+  console.log("vehicleData", vehicleData);
   // 1. Search Logic - Direct endpoint like Postman
   const handleSearch = async (query: string) => {
     if (!query.trim()) {
@@ -65,7 +66,7 @@ export default function HomePage() {
 
     try {
       const res = await apiService.getWithoutToken(
-        `/taxations/agent/public/${query.trim().toUpperCase()}/`
+        `/core/public/vehicles/${query.trim().toUpperCase()}/`
       );
 
       setVehicleData(res);
@@ -163,7 +164,7 @@ export default function HomePage() {
                     <AlertDescription>
                       Balance is{" "}
                       <strong className="text-xl">
-                        ₦{vehicleData.current_balance.toLocaleString()}
+                        ₦{vehicleData?.current_balance?.toLocaleString()}
                       </strong>
                     </AlertDescription>
                   </Alert>

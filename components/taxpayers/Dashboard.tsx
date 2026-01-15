@@ -16,7 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { useGetVehicles } from "@/lib/hooks/taxations.hooks";
+import { useGetVehicles } from "@/lib/hooks/driver.hooks";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { PaymentButton } from "./PaymentButton";
@@ -91,8 +91,8 @@ const Dashboard = () => {
               <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-32 translate-x-32"></div>
               <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-24 -translate-x-24"></div>
 
-              <div className="relative z-10">
-                <div className="flex p-2 items-start justify-between mb-6">
+              <div className="relative p-4 z-10">
+                <div className="flex p-4 items-start justify-between mb-6">
                   <div className="flex items-center gap-3">
                     <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
                       <Car className="h-6 w-6" />
@@ -104,38 +104,17 @@ const Dashboard = () => {
                       <div className="flex items-center gap-2 text-primary">
                         <Calendar className="h-4 w-4" />
                         <span className="text-sm font-medium">
-                          Registered on:
+                          Registered on
                         </span>
                         <span className="text-sm">
                           {formatDate(vehicle.created_at)}
                         </span>
                       </div>
-                    </div>
-                    <div>
                       {vehicle.qr_code && (
                         <>
-                          {/* Clickable QR */}
-                          <button
-                            type="button"
-                            onClick={() => setShowScanner(true)}
-                            className="relative group"
-                          >
-                            <img
-                              src={vehicle.qr_code}
-                              alt="Vehicle QR Code"
-                              className="w-20 h-20 rounded-lg border shadow-sm"
-                            />
-
-                            {/* Hover overlay */}
-                            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition flex items-center justify-center rounded-lg">
-                              <span className="text-white text-xs font-semibold">
-                                Tap to Scan
-                              </span>
-                            </div>
-                          </button>
-
                           {/* Download */}
                           <a
+                            target="_blank"
                             href={vehicle.qr_code}
                             download={`${vehicle.plate_number}-qr.png`}
                             className="text-xs text-primary underline"
@@ -191,18 +170,25 @@ const Dashboard = () => {
                   Financial Overview
                 </h3>
                 <div className="grid sm:grid-cols-1 gap-4">
-                  <Card className="bg-linear-to-br from-green-50 to-emerald-50 border-green-200">
+                  <Card
+                    className={` ${
+                      vehicle.current_balance < 0
+                        ? "bg-red-400"
+                        : "bg-green-400"
+                    } text-white border-0`}
+                  >
                     <CardContent className="pt-6">
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-xs font-medium text-green-700 mb-1">
+                          <p className="text-xs font-medium mb-1">
                             Current Balance
                           </p>
-                          <p className="text-2xl font-bold text-green-900">
+                          <p className="text-2xl font-bold ">
                             {formatCurrency(vehicle.current_balance)}
                           </p>
                         </div>
                         <PaymentButton
+                          vehicle={vehicle}
                           open={openPaymentDialog}
                           onOpenChange={setOpenPaymentDialog}
                         />

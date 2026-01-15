@@ -29,7 +29,7 @@ import {
   useGetPlateNumber,
   useRequestOTP,
   useVerifyOTP,
-} from "@/lib/hooks/taxations.hooks";
+} from "@/lib/hooks/driver.hooks";
 
 type Step = "register" | "verify-details" | "otp";
 

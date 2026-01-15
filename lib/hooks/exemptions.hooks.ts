@@ -1,12 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
-import { taxationApi } from "../api/taxation.api";
+import { driverApi } from "../api/driver.api";
 
 export function useApplyExemption() {
   return useMutation({
     mutationKey: [],
-    mutationFn: (data: any) => taxationApi.requestOtp(data),
+    mutationFn: (data: any) => driverApi.requestOtp(data),
     onSuccess: () => {
       toast.success("OTP sent successfully!");
     },
@@ -16,7 +16,7 @@ export function useApplyExemption() {
 export function useVerifyOTP() {
   return useMutation({
     mutationKey: [],
-    mutationFn: (otp: string) => taxationApi.verifyOTP(otp),
+    mutationFn: (otp: string) => driverApi.verifyOTP(otp),
     onSuccess: () => {
       toast.success("OTP verified successfully!");
     },
@@ -26,6 +26,6 @@ export function useVerifyOTP() {
 export function useGetVehicles() {
   return useQuery({
     queryKey: ["taxpayer-vehicles"],
-    queryFn: () => taxationApi.getVehicles(),
+    queryFn: () => driverApi.getVehicles(),
   });
 }
