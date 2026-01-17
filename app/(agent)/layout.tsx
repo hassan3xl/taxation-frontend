@@ -25,15 +25,11 @@ export default async function AgentLayout({ children }: AgentLayoutProps) {
       <div className="">
         <AgentNavbar />
 
-        <main className="px-4 min-h-screen sm:px-6 lg:px-8 ">
-          <div className="max-w-7xl mx-auto">
-            <br />
-            <br />
-            <br />
-
+        <div className="flex mt-20 ">
+          <div className="max-w-7xl p-4 sm:px-6 lg:px-8 mx-auto w-full">
             {children}
           </div>
-        </main>
+        </div>
       </div>
     </div>
   );

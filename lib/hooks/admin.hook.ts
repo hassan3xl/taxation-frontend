@@ -98,6 +98,13 @@ export const useAdminApproveVehicle = () => {
 };
 
 // payment hooks here
+export const useGetAdminDashboard = (period: any) => {
+  return useQuery({
+    queryKey: ["admin-dashboard", period],
+    queryFn: (period: any) => adminApi.adminDashboard(period),
+  });
+};
+
 export const useGetAdminFinanceDashboard = (period: any) => {
   return useQuery({
     queryKey: ["finance-dashboard", period],

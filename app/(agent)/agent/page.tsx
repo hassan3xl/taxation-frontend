@@ -61,10 +61,12 @@ export default function AgentScanner() {
   const [paymentAmount, setPaymentAmount] = useState("");
 
   const [openDialog, setOpenDialog] = useState(false);
-  
+
   // Receipt State
   const [showReceipt, setShowReceipt] = useState(false);
-  const [selectedReceipt, setSelectedReceipt] = useState<ReceiptData | null>(null);
+  const [selectedReceipt, setSelectedReceipt] = useState<ReceiptData | null>(
+    null,
+  );
 
   const handleViewReceipt = (payment: RecentPayment) => {
     if (!vehicleData) return;
@@ -94,7 +96,7 @@ export default function AgentScanner() {
 
     try {
       const res = await apiService.get(
-        `/agent/vehicles/${query.trim().toUpperCase()}/`
+        `/agent/vehicles/${query.trim().toUpperCase()}/`,
       );
 
       setVehicleData(res);
@@ -131,7 +133,7 @@ export default function AgentScanner() {
     try {
       const res = await apiService.post(
         `/agent/vehicles/${vehicleData.plate_number}/pay/`,
-        { amount }
+        { amount },
       );
 
       // Update the vehicle data with the new balance
@@ -146,7 +148,7 @@ export default function AgentScanner() {
   };
 
   return (
-    <div className="min-h-screen p-2 pb-20">
+    <div className="p-2 pb-20">
       <div className="">
         <VehicleScanner
           loading={loading}
@@ -292,11 +294,11 @@ export default function AgentScanner() {
                                   month: "short",
                                   day: "numeric",
                                   year: "numeric",
-                                }
+                                },
                               )}
                             </span>
-                             <span className="text-[10px] text-muted-foreground font-mono">
-                                {p.id.substring(0, 8)}...
+                            <span className="text-[10px] text-muted-foreground font-mono">
+                              {p.id.substring(0, 8)}...
                             </span>
                             {p.payment_method && (
                               <span className="ml-2 text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded inline-block">
@@ -329,10 +331,10 @@ export default function AgentScanner() {
         )}
       </div>
 
-       <ReceiptDialog 
-        open={showReceipt} 
-        onOpenChange={setShowReceipt} 
-        data={selectedReceipt} 
+      <ReceiptDialog
+        open={showReceipt}
+        onOpenChange={setShowReceipt}
+        data={selectedReceipt}
       />
     </div>
   );

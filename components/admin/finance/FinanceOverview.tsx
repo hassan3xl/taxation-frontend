@@ -37,6 +37,7 @@ import {
   Calendar,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useGetAdminFinanceDashboard } from "@/lib/hooks/admin.hook";
 
 // --- DUMMY DATA ---
 const SUMMARY_DATA = {
@@ -110,13 +111,17 @@ const TRANSACTIONS_DATA = [
 
 export default function FinanceOverview() {
   const [period, setPeriod] = useState("week");
+  const { data: financeDashboard, isLoading } =
+    useGetAdminFinanceDashboard(period);
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">Financial Overview</h2>
+          <h2 className="text-3xl font-bold tracking-tight">
+            Financial Overview
+          </h2>
           <p className="text-muted-foreground">
             Track revenue, transactions, and financial health.
           </p>
@@ -162,7 +167,9 @@ export default function FinanceOverview() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Subscriptions</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Active Subscriptions
+            </CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -180,7 +187,9 @@ export default function FinanceOverview() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Avg. Transaction</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Avg. Transaction
+            </CardTitle>
             <Activity className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -198,7 +207,9 @@ export default function FinanceOverview() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pending Payouts</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Pending Payouts
+            </CardTitle>
             <CreditCard className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -231,12 +242,22 @@ export default function FinanceOverview() {
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={REVENUE_DATA}>
                   <defs>
-                    <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                    <linearGradient
+                      id="colorRevenue"
+                      x1="0"
+                      y1="0"
+                      x2="0"
+                      y2="1"
+                    >
                       <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
                       <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e5e5" />
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    vertical={false}
+                    stroke="#e5e5e5"
+                  />
                   <XAxis
                     dataKey="name"
                     stroke="#888888"
@@ -252,8 +273,15 @@ export default function FinanceOverview() {
                     tickFormatter={(value) => `₦${value / 1000}k`}
                   />
                   <Tooltip
-                    formatter={(value: any) => [`₦${value.toLocaleString()}`, "Revenue"]}
-                    contentStyle={{ borderRadius: "8px", border: "none", boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)" }}
+                    formatter={(value: any) => [
+                      `₦${value.toLocaleString()}`,
+                      "Revenue",
+                    ]}
+                    contentStyle={{
+                      borderRadius: "8px",
+                      border: "none",
+                      boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
+                    }}
                   />
                   <Area
                     type="monotone"
@@ -293,9 +321,15 @@ export default function FinanceOverview() {
                     </div>
                   </div>
                   <div className="ml-auto font-medium text-right">
-                    <div className={trx.status === "Failed" ? "text-destructive" : "text-green-600"}>
-                      {trx.status === "Failed" ? "-" : "+"}
-                      ₦{trx.amount.toLocaleString()}
+                    <div
+                      className={
+                        trx.status === "Failed"
+                          ? "text-destructive"
+                          : "text-green-600"
+                      }
+                    >
+                      {trx.status === "Failed" ? "-" : "+"}₦
+                      {trx.amount.toLocaleString()}
                     </div>
                     <p className="text-xs text-muted-foreground">{trx.date}</p>
                   </div>

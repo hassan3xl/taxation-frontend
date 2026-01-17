@@ -27,7 +27,7 @@ export const adminApi = {
   updateVehicle: async (plateNumber: string, data: any) => {
     const res = await apiService.put(
       `/admin/agent/vehicles/${plateNumber}/`,
-      data
+      data,
     );
     return res;
   },
@@ -80,11 +80,20 @@ export const adminApi = {
     const res = await apiService.get(`/admin/vehicles/finance/`);
     return res;
   },
-  // payments here
-  adminFinanceDashboard: async (period: any) => {
-    const res = await apiService.getWithArgs("/admin/finance/dashboard/", {
+
+  // dashboards here
+  adminDashboard: async (period: any) => {
+    const res = await apiService.getWithArgs("/admin/dashboard/", {
       params: { period },
     });
+    return res;
+  },
+
+  adminFinanceDashboard: async (period: any) => {
+    const res = await apiService.getWithArgs("/admin/dashboard/finance", {
+      params: { period },
+    });
+
     return res;
   },
   adminPayment: async (paymentId: string) => {

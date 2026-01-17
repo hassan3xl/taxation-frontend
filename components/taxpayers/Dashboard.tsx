@@ -42,7 +42,8 @@ interface VehicleDetails {
   total_paid: number;
   total_expected_revenue: number;
   recent_payments: RecentPayment[];
-}import { ReceiptDialog, ReceiptData } from "@/components/shared/ReceiptDialog";
+}
+import { ReceiptDialog, ReceiptData } from "@/components/shared/ReceiptDialog";
 
 // ... (previous types)
 
@@ -52,12 +53,17 @@ const Dashboard = () => {
   const router = useRouter();
   const [openPaymentDialog, setOpenPaymentDialog] = React.useState(false);
   const [showScanner, setShowScanner] = useState(false);
-  
+
   // Receipt State
   const [showReceipt, setShowReceipt] = useState(false);
-  const [selectedReceipt, setSelectedReceipt] = useState<ReceiptData | null>(null);
+  const [selectedReceipt, setSelectedReceipt] = useState<ReceiptData | null>(
+    null,
+  );
 
-  const handleViewReceipt = (payment: RecentPayment, vehicle: VehicleDetails) => {
+  const handleViewReceipt = (
+    payment: RecentPayment,
+    vehicle: VehicleDetails,
+  ) => {
     setSelectedReceipt({
       id: payment.id,
       amount: parseFloat(payment.amount),
@@ -83,8 +89,8 @@ const Dashboard = () => {
   };
 
   if (!vehiclesDetails || vehiclesDetails.length === 0) {
-     // ... (empty state)
-      return (
+    // ... (empty state)
+    return (
       <div className="min-h-screen flex items-center justify-center">
         <Card className="max-w-md w-full">
           <CardContent className="pt-6 text-center">
@@ -101,19 +107,19 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="">
       <div className="max-w-6xl mx-auto space-y-6">
         {/* Vehicle Cards */}
         {vehiclesDetails.map((vehicle: VehicleDetails) => (
           <Card key={vehicle.id} className="overflow-hidden shadow-xl border-0">
             {/* Hero Section */}
             <div className="bg-card relative overflow-hidden">
-               {/* ... (background styling) */}
+              {/* ... (background styling) */}
               <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-32 translate-x-32"></div>
               <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-24 -translate-x-24"></div>
 
               <div className="relative p-4 z-10">
-                 {/* ... (header content) */}
+                {/* ... (header content) */}
                 <div className="flex p-4 items-start justify-between mb-6">
                   <div className="flex items-center gap-3">
                     <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
@@ -166,7 +172,7 @@ const Dashboard = () => {
                 </div>
 
                 <div className="grid p-2 grid-cols-2 gap-4">
-                   {/* ... (details grid) */}
+                  {/* ... (details grid) */}
                   <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3">
                     <User className="h-4 w-4 mb-1 opacity-75" />
                     <p className="text-xs opacity-75">Owner</p>
@@ -230,8 +236,8 @@ const Dashboard = () => {
                   </h3>
                   <div className="space-y-3">
                     {vehicle.recent_payments.map((payment) => (
-                      <Card 
-                        key={payment.id} 
+                      <Card
+                        key={payment.id}
                         className="bg-card border-border cursor-pointer hover:bg-accent/50 transition-colors"
                         onClick={() => handleViewReceipt(payment, vehicle)}
                       >
@@ -249,11 +255,14 @@ const Dashboard = () => {
                                   {formatDate(payment.timestamp)}
                                 </p>
                                 <p className="text-[10px] text-muted-foreground font-mono">
-                                   ID: {payment.id.trim().slice(0, 8)}...
+                                  ID: {payment.id.trim().slice(0, 8)}...
                                 </p>
                               </div>
                             </div>
-                            <Badge variant="secondary" className="capitalize text-xs">
+                            <Badge
+                              variant="secondary"
+                              className="capitalize text-xs"
+                            >
                               {payment.payment_method}
                             </Badge>
                           </div>
@@ -285,10 +294,10 @@ const Dashboard = () => {
         ))}
       </div>
 
-      <ReceiptDialog 
-        open={showReceipt} 
-        onOpenChange={setShowReceipt} 
-        data={selectedReceipt} 
+      <ReceiptDialog
+        open={showReceipt}
+        onOpenChange={setShowReceipt}
+        data={selectedReceipt}
       />
     </div>
   );

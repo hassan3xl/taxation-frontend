@@ -25,7 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Loader2, Wallet, Activity, Users, TrendingUp } from "lucide-react";
-import { useGetAdminFinanceDashboard } from "@/lib/hooks/admin.hook";
+import { useGetAdminDashboard } from "@/lib/hooks/admin.hook";
 import { format } from "date-fns"; // Recommended for formatting chart dates
 import { useRouter } from "next/navigation";
 
@@ -34,8 +34,7 @@ const AnalyticsCharts = () => {
   const [period, setPeriod] = useState("30_days");
 
   // 2. Fetch Data (pass period to hook)
-  const { data: dashboardStats, isLoading } =
-    useGetAdminFinanceDashboard(period);
+  const { data: dashboardStats, isLoading } = useGetAdminDashboard(period);
   console.log("dashboardStats", dashboardStats);
   // Helper to format currency
   const formatNaira = (amount: number) => {

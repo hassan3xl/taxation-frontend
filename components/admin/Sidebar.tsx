@@ -58,21 +58,21 @@ const Sidebar = () => {
         },
       ],
     },
-    {
-      label: "Finance",
-      items: [
-        {
-          label: "Overview",
-          href: "/admin/finance",
-          icon: Banknote,
-        },
-        {
-          label: "Reports",
-          href: "/admin/finance/reports",
-          icon: PieChart,
-        },
-      ],
-    },
+    // {
+    //   label: "Finance",
+    //   items: [
+    //     {
+    //       label: "Overview",
+    //       href: "/admin/finance",
+    //       icon: Banknote,
+    //     },
+    //     {
+    //       label: "Reports",
+    //       href: "/admin/finance/reports",
+    //       icon: PieChart,
+    //     },
+    //   ],
+    // },
     {
       label: "System",
       items: [
@@ -104,7 +104,7 @@ const Sidebar = () => {
           "fixed z-[50] left-0 h-full bg-card border-r border-border transition-all duration-300 ease-in-out flex flex-col shadow-2xl md:shadow-none",
           isOpen
             ? "w-[280px] translate-x-0"
-            : "w-[280px] -translate-x-full md:translate-x-0 md:w-[280px]"
+            : "w-[280px] -translate-x-full md:translate-x-0 md:w-[280px]",
         )}
       >
         {/* Header */}
@@ -144,7 +144,7 @@ const Sidebar = () => {
                         "flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-md transition-colors",
                         isActive
                           ? "bg-primary/10 text-primary hover:bg-primary/15"
-                          : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                          : "text-muted-foreground hover:bg-muted hover:text-foreground",
                       )}
                     >
                       <item.icon size={18} />

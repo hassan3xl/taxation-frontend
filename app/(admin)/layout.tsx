@@ -8,11 +8,11 @@ import { getCurrentUser } from "@/lib/auth";
 import Sidebar from "@/components/admin/Sidebar";
 import { SidebarProvider } from "@/contexts/SidebarContext";
 
-interface MainLayoutProps {
+interface AdminLayoutProps {
   children: React.ReactNode;
 }
 
-export default async function MainLayout({ children }: MainLayoutProps) {
+export default async function AdminLayout({ children }: AdminLayoutProps) {
   const user = await getCurrentUser();
 
   if (!user) {
