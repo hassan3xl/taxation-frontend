@@ -32,6 +32,18 @@ export const adminApi = {
     return res;
   },
 
+  // agents here
+
+  getAgents: async () => {
+    const res = await apiService.get("/admin/agents/");
+    return res;
+  },
+
+  getAgent: async (agentId: string) => {
+    const res = await apiService.get(`/admin/agents/${agentId}/`);
+    return res;
+  },
+
   // users here
 
   getUsers: async () => {

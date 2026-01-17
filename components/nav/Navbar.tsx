@@ -27,7 +27,7 @@ export function Navbar() {
           </div>
 
           <div className="flex gap-4 items-center">
-            <Link href={`/public`}>
+            <Link href={`/public`} aria-label="Scan QR Code">
               <Scan />
             </Link>
             <AccountDropdown />

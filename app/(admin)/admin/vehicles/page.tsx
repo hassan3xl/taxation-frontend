@@ -185,7 +185,7 @@ const AdminVehicles = () => {
             />
           </div>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-[200px]">
+            <SelectTrigger className="w-50">
               <SelectValue placeholder="Filter Status" />
             </SelectTrigger>
             <SelectContent>

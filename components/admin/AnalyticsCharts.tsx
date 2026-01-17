@@ -27,6 +27,7 @@ import {
 import { Loader2, Wallet, Activity, Users, TrendingUp } from "lucide-react";
 import { useGetAdminFinanceDashboard } from "@/lib/hooks/admin.hook";
 import { format } from "date-fns"; // Recommended for formatting chart dates
+import { useRouter } from "next/navigation";
 
 const AnalyticsCharts = () => {
   // 1. Manage Time Filter State
@@ -43,7 +44,7 @@ const AnalyticsCharts = () => {
       currency: "NGN",
     }).format(amount || 0);
   };
-
+  const router = useRouter();
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-96">
@@ -192,7 +193,11 @@ const AnalyticsCharts = () => {
             <div className="space-y-8">
               {topAgents.length > 0 ? (
                 topAgents.map((agent: any, index: number) => (
-                  <div key={index} className="flex items-center">
+                  <div
+                    key={index}
+                    onClick={() => router.push(`/admin/agents/${agent.id}`)}
+                    className="flex hover:bg-accent hover:p-2 rounded-md cursor-pointer items-center"
+                  >
                     <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 font-bold text-slate-800">
                       {index + 1}
                     </div>

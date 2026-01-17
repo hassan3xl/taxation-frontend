@@ -47,6 +47,20 @@ export const useAdminGetUser = (userId: string) => {
   });
 };
 
+// agents
+export const useAdminGetAgents = () => {
+  return useQuery({
+    queryKey: ["agents"],
+    queryFn: () => adminApi.getAgents(),
+  });
+};
+export const useAdminGetAgent = (agentId: string) => {
+  return useQuery({
+    queryKey: ["agent", agentId],
+    queryFn: () => adminApi.getAgent(agentId),
+  });
+};
+
 // vehicles
 
 export const useAdminAddVehicle = () => {

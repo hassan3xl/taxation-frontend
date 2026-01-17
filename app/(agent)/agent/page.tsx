@@ -22,7 +22,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { toast } from "sonner";
 import { apiService } from "@/lib/services/apiService";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { FormInput } from "@/components/FormInput";
+
 import { ReportIssueDialog } from "@/components/admin/ReportIssueDialog";
 import VehicleScanner from "@/components/Vehicles/VehicleScanner";
 
@@ -48,6 +48,11 @@ interface VehicleData {
   updated_at: Date;
 }
 
+// ... (imports)
+import { ReceiptDialog, ReceiptData } from "@/components/shared/ReceiptDialog";
+
+// ... (interfaces)
+
 export default function AgentScanner() {
   const [mode, setMode] = useState<"SCAN" | "MANUAL">("MANUAL");
   const [searchQuery, setSearchQuery] = useState("");
@@ -56,7 +61,26 @@ export default function AgentScanner() {
   const [paymentAmount, setPaymentAmount] = useState("");
 
   const [openDialog, setOpenDialog] = useState(false);
+  
+  // Receipt State
+  const [showReceipt, setShowReceipt] = useState(false);
+  const [selectedReceipt, setSelectedReceipt] = useState<ReceiptData | null>(null);
 
+  const handleViewReceipt = (payment: RecentPayment) => {
+    if (!vehicleData) return;
+    setSelectedReceipt({
+      id: payment.id,
+      amount: parseFloat(payment.amount),
+      date: payment.timestamp,
+      paymentMethod: payment.payment_method || "Cash",
+      payerName: vehicleData.owner_name,
+      plateNumber: vehicleData.plate_number,
+      status: "success",
+    });
+    setShowReceipt(true);
+  };
+
+  // ... (handleSearch, handlePayment implementation)
   console.log("vehicleData", vehicleData);
   // 1. Search Logic - Direct endpoint like Postman
   const handleSearch = async (query: string) => {
@@ -69,7 +93,6 @@ export default function AgentScanner() {
     setVehicleData(null);
 
     try {
-      // Direct URL just like in Postman: /api/taxations/agent/vehicles/AD-1234/
       const res = await apiService.get(
         `/agent/vehicles/${query.trim().toUpperCase()}/`
       );
@@ -134,7 +157,8 @@ export default function AgentScanner() {
 
         {/* VEHICLE RESULT CARD */}
         {vehicleData && (
-          <Card className="animate-in fade-in slide-in-from-bottom-4">
+          <Card className="animate-in mt-2 fade-in slide-in-from-bottom-4">
+            {/* ... (Header and Status Indicator) */}
             <CardHeader className=" border-b">
               <div className="flex justify-between items-start">
                 <div className="py-2">
@@ -255,10 +279,13 @@ export default function AgentScanner() {
                       {vehicleData.recent_payments.slice(0, 5).map((p) => (
                         <div
                           key={p.id}
-                          className="flex justify-between items-center text-sm p-3 bg-card rounded-lg border border-border"
+                          className="flex justify-between items-center text-sm p-3 bg-card rounded-lg border border-border cursor-pointer hover:bg-accent transition-colors"
+                          onClick={() => handleViewReceipt(p)}
+                          role="button"
+                          tabIndex={0}
                         >
                           <div>
-                            <span className="text-secondary-foreground text-xs">
+                            <span className="text-secondary-foreground text-xs block">
                               {new Date(p.timestamp).toLocaleDateString(
                                 "en-US",
                                 {
@@ -268,8 +295,11 @@ export default function AgentScanner() {
                                 }
                               )}
                             </span>
+                             <span className="text-[10px] text-muted-foreground font-mono">
+                                {p.id.substring(0, 8)}...
+                            </span>
                             {p.payment_method && (
-                              <span className="ml-2 text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
+                              <span className="ml-2 text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded inline-block">
                                 {p.payment_method}
                               </span>
                             )}
@@ -298,6 +328,12 @@ export default function AgentScanner() {
           </Card>
         )}
       </div>
+
+       <ReceiptDialog 
+        open={showReceipt} 
+        onOpenChange={setShowReceipt} 
+        data={selectedReceipt} 
+      />
     </div>
   );
 }

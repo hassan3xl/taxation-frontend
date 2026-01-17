@@ -5,7 +5,7 @@ import { Key, Mail, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { handleLogin } from "@/lib/actions/auth.actions";
 import { useForm } from "react-hook-form";
-import { FormInput } from "@/components/ui/formInput";
+import { FormInput } from "@/components/FormInput";
 import { useSignin } from "@/lib/hooks/auth.hook";
 
 type FormValues = {

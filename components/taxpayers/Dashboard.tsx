@@ -42,14 +42,33 @@ interface VehicleDetails {
   total_paid: number;
   total_expected_revenue: number;
   recent_payments: RecentPayment[];
-}
+}import { ReceiptDialog, ReceiptData } from "@/components/shared/ReceiptDialog";
+
+// ... (previous types)
 
 const Dashboard = () => {
   const { data: vehiclesDetails } = useGetVehicles();
-  console.log("vehiclesDetails", vehiclesDetails);
+  // console.log("vehiclesDetails", vehiclesDetails);
   const router = useRouter();
   const [openPaymentDialog, setOpenPaymentDialog] = React.useState(false);
   const [showScanner, setShowScanner] = useState(false);
+  
+  // Receipt State
+  const [showReceipt, setShowReceipt] = useState(false);
+  const [selectedReceipt, setSelectedReceipt] = useState<ReceiptData | null>(null);
+
+  const handleViewReceipt = (payment: RecentPayment, vehicle: VehicleDetails) => {
+    setSelectedReceipt({
+      id: payment.id,
+      amount: parseFloat(payment.amount),
+      date: payment.timestamp,
+      paymentMethod: payment.payment_method,
+      payerName: vehicle.owner_name,
+      plateNumber: vehicle.plate_number,
+      status: "success",
+    });
+    setShowReceipt(true);
+  };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -64,7 +83,8 @@ const Dashboard = () => {
   };
 
   if (!vehiclesDetails || vehiclesDetails.length === 0) {
-    return (
+     // ... (empty state)
+      return (
       <div className="min-h-screen flex items-center justify-center">
         <Card className="max-w-md w-full">
           <CardContent className="pt-6 text-center">
@@ -88,10 +108,12 @@ const Dashboard = () => {
           <Card key={vehicle.id} className="overflow-hidden shadow-xl border-0">
             {/* Hero Section */}
             <div className="bg-card relative overflow-hidden">
+               {/* ... (background styling) */}
               <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-32 translate-x-32"></div>
               <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-24 -translate-x-24"></div>
 
               <div className="relative p-4 z-10">
+                 {/* ... (header content) */}
                 <div className="flex p-4 items-start justify-between mb-6">
                   <div className="flex items-center gap-3">
                     <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
@@ -144,6 +166,7 @@ const Dashboard = () => {
                 </div>
 
                 <div className="grid p-2 grid-cols-2 gap-4">
+                   {/* ... (details grid) */}
                   <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3">
                     <User className="h-4 w-4 mb-1 opacity-75" />
                     <p className="text-xs opacity-75">Owner</p>
@@ -207,7 +230,11 @@ const Dashboard = () => {
                   </h3>
                   <div className="space-y-3">
                     {vehicle.recent_payments.map((payment) => (
-                      <Card key={payment.id} className="bg-card border-border">
+                      <Card 
+                        key={payment.id} 
+                        className="bg-card border-border cursor-pointer hover:bg-accent/50 transition-colors"
+                        onClick={() => handleViewReceipt(payment, vehicle)}
+                      >
                         <CardContent className="p-4">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3">
@@ -215,19 +242,18 @@ const Dashboard = () => {
                                 <CreditCard className="h-4 w-4 text-blue-600" />
                               </div>
                               <div>
-                                <p className="text-secondary-foreground">
-                                  TRX ID: {payment.id.trim().slice(0, 8)}...
-                                </p>
-                                <p className="text-xs text-secondary-foreground mt-0.5">
-                                  Date: {formatDate(payment.timestamp)}
-                                </p>
-                                <p className="font-semibold text-primary">
-                                  Amount:{" "}
+                                <p className="text-secondary-foreground font-medium">
                                   {formatCurrency(parseFloat(payment.amount))}
+                                </p>
+                                <p className="text-xs text-muted-foreground mt-0.5">
+                                  {formatDate(payment.timestamp)}
+                                </p>
+                                <p className="text-[10px] text-muted-foreground font-mono">
+                                   ID: {payment.id.trim().slice(0, 8)}...
                                 </p>
                               </div>
                             </div>
-                            <Badge variant="outline" className="capitalize">
+                            <Badge variant="secondary" className="capitalize text-xs">
                               {payment.payment_method}
                             </Badge>
                           </div>
@@ -241,14 +267,14 @@ const Dashboard = () => {
               {/* Action Buttons */}
               <div className="grid grid-cols-2 gap-3 pt-2">
                 <Link href={`/history`}>
-                  <Button className="w-full">
+                  <Button className="w-full" variant="outline">
                     <History className="mr-2 h-4 w-4" />
-                    History
+                    Full History
                   </Button>
                 </Link>
 
                 <Link href={`/settings`}>
-                  <Button className="w-full">
+                  <Button className="w-full" variant="outline">
                     <Settings className="mr-2 h-4 w-4" />
                     Settings
                   </Button>
@@ -258,6 +284,12 @@ const Dashboard = () => {
           </Card>
         ))}
       </div>
+
+      <ReceiptDialog 
+        open={showReceipt} 
+        onOpenChange={setShowReceipt} 
+        data={selectedReceipt} 
+      />
     </div>
   );
 };

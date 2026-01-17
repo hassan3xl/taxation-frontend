@@ -55,11 +55,9 @@ export default function CreateAgentPage() {
     <div className="container mx-auto py-10 space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">
-            Agent Management
-          </h1>
+          <h1 className="text-3xl font-bold tracking-tight">User Management</h1>
           <p className="text-muted-foreground">
-            Select eligible taxpayers to promote to agent role.
+            Select eligible users to promote to agent role.
           </p>
         </div>
       </div>
@@ -79,7 +77,6 @@ export default function CreateAgentPage() {
             <Table>
               <TableHeader className="bg-card">
                 <TableRow>
-                  <TableHead>Full Name</TableHead>
                   <TableHead>Contact Info</TableHead>
                   <TableHead>Current Role</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
@@ -87,15 +84,7 @@ export default function CreateAgentPage() {
               </TableHeader>
               <TableBody>
                 {candidates.map((user: any) => (
-                  <TableRow key={user.id} className="hover:bg-slate-50/50">
-                    <TableCell className="font-medium">
-                      <div className="flex items-center gap-2">
-                        <div className="h-8 w-8 rounded-full bg-slate-200 flex items-center justify-center font-bold text-slate-600">
-                          {user.full_name.charAt(0).toUpperCase()}
-                        </div>
-                        {user.full_name}
-                      </div>
-                    </TableCell>
+                  <TableRow key={user.id} className="hover:bg-accent">
                     <TableCell>
                       <div className="flex flex-col space-y-1 text-sm text-muted-foreground">
                         <div className="flex items-center gap-1">

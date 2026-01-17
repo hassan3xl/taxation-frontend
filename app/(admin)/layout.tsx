@@ -30,7 +30,7 @@ export default async function MainLayout({ children }: MainLayoutProps) {
           <AdminNavbar />
 
           <div className="flex mt-20 ">
-            <div className="md:mr-60">
+            <div className="md:mr-65">
               <Sidebar />
             </div>
             <div className="max-w-7xl p-4 sm:px-6 lg:px-8 mx-auto w-full">

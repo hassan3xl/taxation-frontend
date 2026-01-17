@@ -30,6 +30,7 @@ import {
   useRequestOTP,
   useVerifyOTP,
 } from "@/lib/hooks/driver.hooks";
+import { toast } from "sonner";
 
 type Step = "register" | "verify-details" | "otp";
 

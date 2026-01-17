@@ -1,9 +1,10 @@
-"use client";
-
+import FinanceOverview from "@/components/admin/finance/FinanceOverview";
 import React from "react";
 
-const FinancePage = () => {
-  return <div></div>;
-};
-
-export default FinancePage;
+export default function FinancePage() {
+  return (
+    <div className="h-full w-full">
+      <FinanceOverview />
+    </div>
+  );
+}

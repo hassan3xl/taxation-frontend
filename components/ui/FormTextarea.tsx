@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Eye, EyeOff, Check, X } from "lucide-react";
+import { X, Check } from "lucide-react";
 import {
   UseFormRegister,
   FieldError,
@@ -10,41 +10,36 @@ import {
 } from "react-hook-form";
 import { cn } from "@/lib/utils";
 
-
-
-interface InputProps<T extends FieldValues> {
+interface FormTextareaProps<T extends FieldValues> {
   name: Path<T>;
   register: UseFormRegister<T>;
   label?: string;
   icon?: React.ComponentType<{ size?: number; className?: string }>;
-  type?: string;
   placeholder?: string;
   error?: FieldError;
   success?: string;
   disabled?: boolean;
+  rows?: number;
   validation?: object;
   className?: string;
   [key: string]: any;
 }
 
-export function FormInput<T extends FieldValues>({
+export function FormTextarea<T extends FieldValues>({
   name,
   register,
   label,
   icon: Icon,
-  type = "text",
   placeholder,
   error,
   success,
   disabled = false,
+  rows = 4,
   validation = {},
   className = "",
   ...props
-}: InputProps<T>) {
-  const [showPassword, setShowPassword] = useState(false);
+}: FormTextareaProps<T>) {
   const [focused, setFocused] = useState(false);
-
-  const inputType = type === "password" && showPassword ? "text" : type;
 
   const getContainerClasses = () => {
     const base =
@@ -68,7 +63,7 @@ export function FormInput<T extends FieldValues>({
       : "text-muted-foreground";
 
   const fieldClass = cn(
-    "flex-1 px-4 py-2.5 bg-transparent outline-none text-foreground placeholder:text-muted-foreground",
+    "flex-1 px-4 py-2.5 bg-transparent outline-none text-foreground placeholder:text-muted-foreground resize-none",
     className
   );
 
@@ -84,28 +79,22 @@ export function FormInput<T extends FieldValues>({
       )}
       <div className={getContainerClasses()}>
         {Icon && (
-          <Icon size={20} className={cn("ml-4", getIconClasses())} />
+          <Icon
+            size={20}
+            className={cn("ml-4 self-start mt-3", getIconClasses())}
+          />
         )}
-        <input
-          type={inputType}
+        <textarea
+          id={name}
           {...register(name, validation)}
           placeholder={placeholder}
+          rows={rows}
           disabled={disabled}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
           className={fieldClass}
           {...props}
         />
-        {type === "password" && (
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="mr-4 text-muted-foreground hover:text-foreground transition-colors"
-            tabIndex={-1}
-          >
-            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-          </button>
-        )}
       </div>
       {error && (
         <p className="mt-2 text-sm text-red-600 dark:text-red-400 flex items-center">
@@ -120,5 +109,3 @@ export function FormInput<T extends FieldValues>({
     </div>
   );
 }
-
-

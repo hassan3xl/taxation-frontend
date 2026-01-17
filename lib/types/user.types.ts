@@ -1,27 +1,18 @@
-// export interface ProfileUserType {
-//   id: string;
-//   email: string;
-// }
+export interface UserInfoType {
+  id: string;
+  email: string;
+  is_active: boolean;
+  role: string;
+}
 
-// export interface ProfilePType {
-//   id: string;
-//   avatar: string;
-//   first_name: string;
-//   last_name: string;
-//   full_name: string;
-//   username: string;
-//   bio: string;
-//   phone_number: string;
-//   user: ProfileUserType;
-// }
-
-// export interface UserType {
-//   id: string;
-//   email: string;
-//   full_name?: string;
-//   username: string;
-//   avatar?: string;
-// }
+export interface AgentType {
+  id: string;
+  active_status: "active" | "inactive" | string;
+  full_name: string;
+  phone: string; // Note: Your backend sample shows a date string here
+  station_location: string;
+  user: UserInfoType;
+}
 
 export interface AuthUserType {
   id: string;
